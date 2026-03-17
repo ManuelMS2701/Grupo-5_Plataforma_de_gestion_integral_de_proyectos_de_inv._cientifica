@@ -1,0 +1,109 @@
+﻿@model ResearchHub.Models.RegisterViewModel
+
+@{
+    ViewData["Title"] = "Crear cuenta";
+}
+
+<style>
+    .rh-auth-wrap {
+        max-width: 500px;
+        margin: 0 auto;
+        padding: 50px 20px 70px;
+        font-family: "Space Grotesk", system-ui, sans-serif;
+    }
+
+    .rh-auth-title {
+        font-family: "Fraunces", serif;
+        font-size: 2rem;
+        margin-bottom: 6px;
+    }
+
+    .rh-auth-sub {
+        color: #64748b;
+        margin-bottom: 20px;
+    }
+
+    .rh-card {
+        background: #ffffff;
+        border: 1px solid rgba(15,23,42,0.08);
+        border-radius: 16px;
+        padding: 22px;
+        box-shadow: 0 12px 24px rgba(15,23,42,0.06);
+    }
+
+    .rh-label {
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+
+    .rh-input {
+        border-radius: 10px;
+        border: 1px solid rgba(15,23,42,0.12);
+        padding: 10px 12px;
+    }
+
+    .rh-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 18px;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .rh-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #5b8df6;
+        color: #fff;
+        padding: 10px 14px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        border: none;
+        box-shadow: 0 10px 24px rgba(91, 141, 246, 0.2);
+    }
+
+    .rh-link {
+        color: #1d4ed8;
+        text-decoration: none;
+        font-weight: 600;
+    }
+
+    .rh-link:hover { text-decoration: underline; }
+</style>
+
+<div class="rh-auth-wrap">
+    <h1 class="rh-auth-title">Crear cuenta</h1>
+    <p class="rh-auth-sub">Regístrate para comenzar.</p>
+
+    <div class="rh-card">
+        <form asp-action="Register" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+            <div class="mb-3">
+                <label class="rh-label" asp-for="Email"></label>
+                <input class="form-control rh-input" asp-for="Email" type="email" />
+                <span class="text-danger" asp-validation-for="Email"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="rh-label" asp-for="Password"></label>
+                <input class="form-control rh-input" asp-for="Password" type="password" />
+                <span class="text-danger" asp-validation-for="Password"></span>
+            </div>
+
+            <div class="mb-3">
+                <label class="rh-label" asp-for="ConfirmPassword"></label>
+                <input class="form-control rh-input" asp-for="ConfirmPassword" type="password" />
+                <span class="text-danger" asp-validation-for="ConfirmPassword"></span>
+            </div>
+
+            <div class="rh-actions">
+                <button class="rh-btn" type="submit">Crear cuenta</button>
+                <a class="rh-link" asp-action="Login">Ya tengo cuenta</a>
+            </div>
+        </form>
+    </div>
+</div>

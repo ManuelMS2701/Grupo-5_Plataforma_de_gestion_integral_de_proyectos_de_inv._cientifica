@@ -1,0 +1,44 @@
+﻿@{
+    ViewData["Title"] = "Acceso denegado";
+}
+
+<style>
+    .rh-auth-wrap {
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 50px 20px 70px;
+        font-family: "Space Grotesk", system-ui, sans-serif;
+        text-align: center;
+    }
+
+    .rh-auth-title {
+        font-family: "Fraunces", serif;
+        font-size: 2rem;
+        margin-bottom: 6px;
+    }
+
+    .rh-auth-sub {
+        color: #64748b;
+        margin-bottom: 20px;
+    }
+
+    .rh-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #5b8df6;
+        color: #fff;
+        padding: 10px 14px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        border: none;
+        box-shadow: 0 10px 24px rgba(91, 141, 246, 0.2);
+    }
+</style>
+
+<div class="rh-auth-wrap">
+    <h1 class="rh-auth-title">Acceso denegado</h1>
+    <p class="rh-auth-sub">No tienes permisos para ver este contenido.</p>
+    <a class="rh-btn" asp-controller="Home" asp-action="Index">Volver al inicio</a>
+</div>

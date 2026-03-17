@@ -1,0 +1,187 @@
+﻿@using ResearchHub.Models
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ResearchHub</title>
+    <script type="importmap"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/ResearchHub.styles.css" asp-append-version="true" />
+
+    <style>
+        :root {
+            --ink: #0f172a;
+            --muted: #64748b;
+            --accent: #3b82f6;
+            --accent-soft: #e8f0ff;
+            --accent-2: #22c55e;
+            --paper: #f7f8fb;
+            --ring: rgba(15, 23, 42, 0.08);
+        }
+
+        body {
+            font-family: "Space Grotesk", system-ui, sans-serif;
+            color: var(--ink);
+            background: radial-gradient(1200px 600px at 10% -10%, #eef3ff 0%, transparent 60%),
+                        radial-gradient(900px 500px at 90% 0%, #f1f8f4 0%, transparent 55%),
+                        var(--paper);
+            min-height: 100vh;
+        }
+
+        .rh-shell {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .rh-nav {
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: 1px solid var(--ring);
+            backdrop-filter: blur(8px);
+        }
+
+        .rh-brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .rh-brand img {
+            height: 52px;
+            width: auto;
+            display: block;
+            filter: drop-shadow(0 6px 10px rgba(15, 23, 42, 0.15));
+        }
+
+        .rh-brand span {
+            font-family: "Fraunces", serif;
+            font-weight: 700;
+            letter-spacing: -0.4px;
+            font-size: 1.15rem;
+        }
+
+        .rh-nav .nav-link {
+            color: var(--ink) !important;
+            font-weight: 500;
+            margin-right: 6px;
+            border-radius: 999px;
+            padding: 6px 12px;
+        }
+
+        .rh-nav .nav-link:hover {
+            color: #1d4ed8 !important;
+            background: var(--accent-soft);
+        }
+
+        .rh-nav .nav-link.active {
+            color: #1d4ed8 !important;
+            background: var(--accent-soft);
+        }
+
+        .rh-main {
+            flex: 1;
+        }
+
+        .rh-footer {
+            border-top: 1px solid var(--ring);
+            color: var(--muted);
+            font-size: 0.9rem;
+            background: rgba(255, 255, 255, 0.85);
+        }
+
+        .rh-footer a {
+            color: var(--muted);
+        }
+
+        .rh-footer a:hover {
+            color: #1d4ed8;
+        }
+
+        @@media (max-width: 900px) {
+            .rh-brand span {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="rh-shell">
+        <header class="rh-nav">
+            <nav class="navbar navbar-expand-sm navbar-toggleable-sm">
+                <div class="container-fluid">
+                    <a class="navbar-brand rh-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                        <img src="~/images/logo.png" alt="ResearchHub" />
+                        <span>ResearchHub</span>
+                    </a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
+                            aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                        <ul class="navbar-nav flex-grow-1">
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Instituciones" asp-action="Index">Instituciones</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Investigadores" asp-action="Index">Investigadores</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="LineasInvestigacion" asp-action="Index">Líneas</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Proyectos" asp-action="Index">Proyectos</a>
+                            </li>
+                        </ul>
+                        <ul class="navbar-nav">
+                            @if (User?.Identity?.IsAuthenticated == true)
+                            {
+                                <li class="nav-item">
+                                    <span class="nav-link">Hola, @User.Identity?.Name</span>
+                                </li>
+                                <li class="nav-item">
+                                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="nav-link btn btn-link" style="padding:6px 12px;">Salir</button>
+                                    </form>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Account" asp-action="Login">Ingresar</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Account" asp-action="Register">Registrarse</a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <div class="rh-main">
+            @RenderBody()
+        </div>
+
+        <footer class="rh-footer">
+            <div class="container py-3">
+                &copy; 2026 - ResearchHub
+            </div>
+        </footer>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

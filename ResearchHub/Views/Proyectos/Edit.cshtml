@@ -1,0 +1,150 @@
+﻿@model ResearchHub.Models.Proyecto
+
+@{
+    ViewData["Title"] = "Editar proyecto";
+}
+
+<style>
+    .rh-form-wrap {
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 40px 20px 70px;
+        font-family: "Space Grotesk", system-ui, sans-serif;
+    }
+
+    .rh-form-title {
+        font-family: "Fraunces", serif;
+        font-size: clamp(1.7rem, 3vw, 2.4rem);
+        margin: 0 0 8px;
+    }
+
+    .rh-form-sub {
+        color: #64748b;
+        margin-bottom: 20px;
+    }
+
+    .rh-card {
+        background: #ffffff;
+        border: 1px solid rgba(15,23,42,0.08);
+        border-radius: 16px;
+        padding: 22px;
+        box-shadow: 0 12px 24px rgba(15,23,42,0.06);
+    }
+
+    .rh-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+    }
+
+    .rh-grid-full {
+        grid-column: 1 / -1;
+    }
+
+    .rh-label {
+        font-weight: 600;
+        margin-bottom: 6px;
+    }
+
+    .rh-input {
+        border-radius: 10px;
+        border: 1px solid rgba(15,23,42,0.12);
+        padding: 10px 12px;
+    }
+
+    .rh-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 18px;
+    }
+
+    .rh-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #5b8df6;
+        color: #fff;
+        padding: 10px 14px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        border: none;
+        box-shadow: 0 10px 24px rgba(91, 141, 246, 0.2);
+    }
+
+    .rh-btn-secondary {
+        background: #e2e8f0;
+        color: #0f172a;
+        box-shadow: none;
+    }
+
+    @@media (max-width: 900px) {
+        .rh-grid { grid-template-columns: 1fr; }
+    }
+</style>
+
+<div class="rh-form-wrap">
+    <h1 class="rh-form-title">Editar proyecto</h1>
+    <p class="rh-form-sub">Actualiza los datos del proyecto.</p>
+
+    <div class="rh-card">
+        <form asp-action="Edit" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="IdProyecto" />
+
+            <div class="rh-grid">
+                <div>
+                    <label class="rh-label" asp-for="Titulo"></label>
+                    <input class="form-control rh-input" asp-for="Titulo" />
+                    <span class="text-danger" asp-validation-for="Titulo"></span>
+                </div>
+
+                <div>
+                    <label class="rh-label" asp-for="Estado"></label>
+                    <input class="form-control rh-input" asp-for="Estado" />
+                    <span class="text-danger" asp-validation-for="Estado"></span>
+                </div>
+
+                <div>
+                    <label class="rh-label" asp-for="FechaInicio"></label>
+                    <input class="form-control rh-input" asp-for="FechaInicio" type="date" />
+                </div>
+
+                <div>
+                    <label class="rh-label" asp-for="FechaFin"></label>
+                    <input class="form-control rh-input" asp-for="FechaFin" type="date" />
+                </div>
+
+                <div>
+                    <label class="rh-label">Investigador principal</label>
+                    <select class="form-select rh-input" asp-for="IdInvestigadorPrincipal" asp-items="@(ViewData["Investigadores"] as SelectList)"></select>
+                </div>
+
+                <div>
+                    <label class="rh-label">Institución</label>
+                    <select class="form-select rh-input" asp-for="IdInstitucion" asp-items="@(ViewData["Instituciones"] as SelectList)"></select>
+                </div>
+
+                <div>
+                    <label class="rh-label">Línea de investigación</label>
+                    <select class="form-select rh-input" asp-for="IdLinea" asp-items="@(ViewData["Lineas"] as SelectList)"></select>
+                </div>
+
+                <div class="rh-grid-full">
+                    <label class="rh-label" asp-for="Descripcion"></label>
+                    <textarea class="form-control rh-input" asp-for="Descripcion" rows="3"></textarea>
+                </div>
+
+                <div class="rh-grid-full">
+                    <label class="rh-label" asp-for="ObjetivoGeneral"></label>
+                    <textarea class="form-control rh-input" asp-for="ObjetivoGeneral" rows="3"></textarea>
+                </div>
+            </div>
+
+            <div class="rh-actions">
+                <button class="rh-btn" type="submit">Guardar cambios</button>
+                <a class="rh-btn rh-btn-secondary" asp-action="Index">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
