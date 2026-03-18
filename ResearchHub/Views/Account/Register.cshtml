@@ -1,7 +1,7 @@
 ﻿@model ResearchHub.Models.RegisterViewModel
 
 @{
-    ViewData["Title"] = "Crear cuenta";
+    ViewData["Title"] = "Crear Cuenta";
 }
 
 <style>
@@ -83,13 +83,13 @@
             <div asp-validation-summary="All" class="text-danger mb-3"></div>
 
             <div class="mb-3">
-                <label class="rh-label" asp-for="Email"></label>
+                <label class="rh-label" asp-for="Correo Electrónico"></label>
                 <input class="form-control rh-input" asp-for="Email" type="email" />
                 <span class="text-danger" asp-validation-for="Email"></span>
             </div>
 
             <div class="mb-3">
-                <label class="rh-label" asp-for="Password"></label>
+                <label class="rh-label" asp-for="Contraseña"></label>
                 <input class="form-control rh-input" asp-for="Password" type="password" />
                 <span class="text-danger" asp-validation-for="Password"></span>
             </div>
