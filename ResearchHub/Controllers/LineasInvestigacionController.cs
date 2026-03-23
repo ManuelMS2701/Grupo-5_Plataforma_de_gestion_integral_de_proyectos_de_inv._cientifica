@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ResearchHub.Data;
 using ResearchHub.Models;
 
 namespace ResearchHub.Controllers
 {
+    [Authorize(Roles = Roles.Administrador)]
     public class LineasInvestigacionController : Controller
     {
         private readonly ResearchHubContext _context;
@@ -14,7 +16,6 @@ namespace ResearchHub.Controllers
             _context = context;
         }
 
-        // GET: LineasInvestigacion
         public async Task<IActionResult> Index()
         {
             var lineas = await _context.LineasInvestigacion
@@ -24,7 +25,6 @@ namespace ResearchHub.Controllers
             return View(lineas);
         }
 
-        // GET: LineasInvestigacion/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -38,13 +38,11 @@ namespace ResearchHub.Controllers
             return View(linea);
         }
 
-        // GET: LineasInvestigacion/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: LineasInvestigacion/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(LineaInvestigacion linea)
@@ -60,7 +58,6 @@ namespace ResearchHub.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: LineasInvestigacion/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -71,7 +68,6 @@ namespace ResearchHub.Controllers
             return View(linea);
         }
 
-        // POST: LineasInvestigacion/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, LineaInvestigacion linea)
@@ -97,7 +93,6 @@ namespace ResearchHub.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: LineasInvestigacion/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -111,7 +106,6 @@ namespace ResearchHub.Controllers
             return View(linea);
         }
 
-        // POST: LineasInvestigacion/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

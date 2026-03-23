@@ -1,0 +1,126 @@
+@{
+    ViewData["Title"] = "Panel administrativo";
+}
+
+<style>
+    .admin-shell {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 36px 20px 52px;
+        font-family: "Space Grotesk", system-ui, sans-serif;
+    }
+
+    .admin-header {
+        margin-bottom: 20px;
+    }
+
+    .admin-title {
+        font-family: "Fraunces", serif;
+        font-size: clamp(2rem, 4vw, 3rem);
+        margin: 0 0 8px;
+        color: #0f172a;
+    }
+
+    .admin-subtitle {
+        color: #64748b;
+        margin: 0;
+    }
+
+    .admin-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .admin-card {
+        display: grid;
+        gap: 12px;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 16px;
+        background: #fff;
+        padding: 18px;
+        box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+    }
+
+    .admin-card h3 {
+        margin: 0;
+        font-size: 1.2rem;
+        color: #0f172a;
+    }
+
+    .admin-card p {
+        margin: 0;
+        color: #64748b;
+    }
+
+    .admin-actions {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .admin-btn {
+        border: 1px solid rgba(37, 99, 235, 0.2);
+        color: #1d4ed8;
+        background: #eff6ff;
+        border-radius: 999px;
+        padding: 8px 12px;
+        font-weight: 600;
+        text-decoration: none;
+    }
+
+    .admin-btn:hover {
+        background: #dbeafe;
+    }
+
+    @@media (max-width: 900px) {
+        .admin-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="admin-shell">
+    <div class="admin-header">
+        <h1 class="admin-title">Panel administrativo</h1>
+        <p class="admin-subtitle">Gestiona módulos críticos y operaciones CRUD del sistema.</p>
+    </div>
+
+    <div class="admin-grid">
+        <article class="admin-card">
+            <h3>Instituciones</h3>
+            <p>Administra catálogo institucional y sus datos de contacto.</p>
+            <div class="admin-actions">
+                <a class="admin-btn" asp-controller="Instituciones" asp-action="Index">Ver listado</a>
+                <a class="admin-btn" asp-controller="Instituciones" asp-action="Create">Nueva institución</a>
+            </div>
+        </article>
+
+        <article class="admin-card">
+            <h3>Investigadores</h3>
+            <p>Gestiona investigadores, relación institucional y estado activo.</p>
+            <div class="admin-actions">
+                <a class="admin-btn" asp-controller="Investigadores" asp-action="Index">Ver listado</a>
+                <a class="admin-btn" asp-controller="Investigadores" asp-action="Create">Nuevo investigador</a>
+            </div>
+        </article>
+
+        <article class="admin-card">
+            <h3>Líneas de investigación</h3>
+            <p>Controla líneas activas y definición temática del hub.</p>
+            <div class="admin-actions">
+                <a class="admin-btn" asp-controller="LineasInvestigacion" asp-action="Index">Ver listado</a>
+                <a class="admin-btn" asp-controller="LineasInvestigacion" asp-action="Create">Nueva línea</a>
+            </div>
+        </article>
+
+        <article class="admin-card">
+            <h3>Proyectos</h3>
+            <p>Alta y mantenimiento de proyectos (crear, editar y eliminar).</p>
+            <div class="admin-actions">
+                <a class="admin-btn" asp-controller="Proyectos" asp-action="Index">Ver listado</a>
+                <a class="admin-btn" asp-controller="Proyectos" asp-action="Create">Nuevo proyecto</a>
+            </div>
+        </article>
+    </div>
+</div>

@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ResearchHub.Data;
 using ResearchHub.Models;
 
 namespace ResearchHub.Controllers
 {
+    [Authorize(Roles = Roles.Administrador)]
     public class InstitucionesController : Controller
     {
         private readonly ResearchHubContext _context;
@@ -14,7 +16,6 @@ namespace ResearchHub.Controllers
             _context = context;
         }
 
-        // GET: Instituciones
         public async Task<IActionResult> Index()
         {
             var instituciones = await _context.Instituciones
@@ -24,7 +25,6 @@ namespace ResearchHub.Controllers
             return View(instituciones);
         }
 
-        // GET: Instituciones/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -38,13 +38,11 @@ namespace ResearchHub.Controllers
             return View(institucion);
         }
 
-        // GET: Instituciones/Create
         public IActionResult Create()
         {
             return View();
         }
 
-        // POST: Instituciones/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Institucion institucion)
@@ -60,7 +58,6 @@ namespace ResearchHub.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Instituciones/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -71,7 +68,6 @@ namespace ResearchHub.Controllers
             return View(institucion);
         }
 
-        // POST: Instituciones/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Institucion institucion)
@@ -97,7 +93,6 @@ namespace ResearchHub.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Instituciones/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -111,17 +106,28 @@ namespace ResearchHub.Controllers
             return View(institucion);
         }
 
-        // POST: Instituciones/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var institucion = await _context.Instituciones.FindAsync(id);
-            if (institucion != null)
+            if (institucion == null)
             {
-                _context.Instituciones.Remove(institucion);
-                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
+
+            var tieneInvestigadores = await _context.Investigadores
+                .AsNoTracking()
+                .AnyAsync(i => i.IdInstitucion == id);
+
+            if (tieneInvestigadores)
+            {
+                TempData["DeleteError"] = "No se puede eliminar: hay investigadores asociados a esta institución.";
+                return RedirectToAction(nameof(Delete), new { id });
+            }
+
+            _context.Instituciones.Remove(institucion);
+            await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
         }

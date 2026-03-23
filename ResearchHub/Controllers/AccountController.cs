@@ -5,6 +5,7 @@ using ResearchHub.Models;
 
 namespace ResearchHub.Controllers
 {
+    [AllowAnonymous]
     public class AccountController : Controller
     {
         private readonly UserManager<ApplicationUser> _userManager;
@@ -73,6 +74,7 @@ namespace ResearchHub.Controllers
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
+                await _userManager.AddToRoleAsync(user, Roles.Usuario);
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 return RedirectToAction("Index", "Home");
             }
@@ -93,7 +95,6 @@ namespace ResearchHub.Controllers
             return RedirectToAction("Index", "Home");
         }
 
-        [Authorize]
         public IActionResult AccessDenied()
         {
             return View();

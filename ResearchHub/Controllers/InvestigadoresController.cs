@@ -1,10 +1,12 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ResearchHub.Data;
 using ResearchHub.Models;
 
 namespace ResearchHub.Controllers
 {
+    [Authorize(Roles = Roles.Administrador)]
     public class InvestigadoresController : Controller
     {
         private readonly ResearchHubContext _context;
@@ -14,7 +16,6 @@ namespace ResearchHub.Controllers
             _context = context;
         }
 
-        // GET: Investigadores
         public async Task<IActionResult> Index()
         {
             var investigadores = await _context.Investigadores
@@ -25,7 +26,6 @@ namespace ResearchHub.Controllers
             return View(investigadores);
         }
 
-        // GET: Investigadores/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -40,7 +40,6 @@ namespace ResearchHub.Controllers
             return View(investigador);
         }
 
-        // GET: Investigadores/Create
         public async Task<IActionResult> Create()
         {
             ViewData["Instituciones"] = await _context.Instituciones
@@ -50,7 +49,6 @@ namespace ResearchHub.Controllers
             return View();
         }
 
-        // POST: Investigadores/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Investigador investigador)
@@ -70,7 +68,6 @@ namespace ResearchHub.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Investigadores/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -85,7 +82,6 @@ namespace ResearchHub.Controllers
             return View(investigador);
         }
 
-        // POST: Investigadores/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Investigador investigador)
@@ -114,7 +110,6 @@ namespace ResearchHub.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // GET: Investigadores/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -129,7 +124,6 @@ namespace ResearchHub.Controllers
             return View(investigador);
         }
 
-        // POST: Investigadores/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
