@@ -3,6 +3,18 @@
   "WorkspaceRootPath": "C:\\Users\\User\\Desktop\\ResearchHub\\",
   "Documents": [
     {
+      "AbsoluteMoniker": "D:0:0:{CFAA2D4E-1B46-0DE5-EC75-A17ABF9A1A16}|ResearchHub\\ResearchHub.csproj|c:\\users\\user\\desktop\\researchhub\\researchhub\\models\\entidadroadmapviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{CFAA2D4E-1B46-0DE5-EC75-A17ABF9A1A16}|ResearchHub\\ResearchHub.csproj|solutionrelative:researchhub\\models\\entidadroadmapviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CFAA2D4E-1B46-0DE5-EC75-A17ABF9A1A16}|ResearchHub\\ResearchHub.csproj|c:\\users\\user\\desktop\\researchhub\\researchhub\\views\\busqueda\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{CFAA2D4E-1B46-0DE5-EC75-A17ABF9A1A16}|ResearchHub\\ResearchHub.csproj|solutionrelative:researchhub\\views\\busqueda\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{CFAA2D4E-1B46-0DE5-EC75-A17ABF9A1A16}|ResearchHub\\ResearchHub.csproj|c:\\users\\user\\desktop\\researchhub\\researchhub\\views\\admin\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "RelativeMoniker": "D:0:0:{CFAA2D4E-1B46-0DE5-EC75-A17ABF9A1A16}|ResearchHub\\ResearchHub.csproj|solutionrelative:researchhub\\views\\admin\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{CFAA2D4E-1B46-0DE5-EC75-A17ABF9A1A16}|ResearchHub\\ResearchHub.csproj|c:\\users\\user\\desktop\\researchhub\\researchhub\\views\\account\\register.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{CFAA2D4E-1B46-0DE5-EC75-A17ABF9A1A16}|ResearchHub\\ResearchHub.csproj|solutionrelative:researchhub\\views\\account\\register.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
@@ -37,10 +49,6 @@
     {
       "AbsoluteMoniker": "D:0:0:{CFAA2D4E-1B46-0DE5-EC75-A17ABF9A1A16}|ResearchHub\\ResearchHub.csproj|c:\\users\\user\\desktop\\researchhub\\researchhub\\controllers\\equiposlaboratoriocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{CFAA2D4E-1B46-0DE5-EC75-A17ABF9A1A16}|ResearchHub\\ResearchHub.csproj|solutionrelative:researchhub\\controllers\\equiposlaboratoriocontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{CFAA2D4E-1B46-0DE5-EC75-A17ABF9A1A16}|ResearchHub\\ResearchHub.csproj|c:\\users\\user\\desktop\\researchhub\\researchhub\\views\\admin\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}",
-      "RelativeMoniker": "D:0:0:{CFAA2D4E-1B46-0DE5-EC75-A17ABF9A1A16}|ResearchHub\\ResearchHub.csproj|solutionrelative:researchhub\\views\\admin\\index.cshtml||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{CFAA2D4E-1B46-0DE5-EC75-A17ABF9A1A16}|ResearchHub\\ResearchHub.csproj|c:\\users\\user\\desktop\\researchhub\\researchhub\\controllers\\gestioncontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -163,6 +171,32 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
+              "Title": "EntidadRoadmapViewModel.cs",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Models\\EntidadRoadmapViewModel.cs",
+              "RelativeDocumentMoniker": "ResearchHub\\Models\\EntidadRoadmapViewModel.cs",
+              "ToolTip": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Models\\EntidadRoadmapViewModel.cs",
+              "RelativeToolTip": "ResearchHub\\Models\\EntidadRoadmapViewModel.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAABCAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-31T19:47:56.84Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Index.cshtml",
+              "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Views\\Busqueda\\Index.cshtml",
+              "RelativeDocumentMoniker": "ResearchHub\\Views\\Busqueda\\Index.cshtml",
+              "ToolTip": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Views\\Busqueda\\Index.cshtml",
+              "RelativeToolTip": "ResearchHub\\Views\\Busqueda\\Index.cshtml",
+              "ViewState": "AgIAAC4AAAAALu/fOvAfwAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2026-03-31T19:47:14.494Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
               "Title": "Register.cshtml",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Views\\Account\\Register.cshtml",
               "RelativeDocumentMoniker": "ResearchHub\\Views\\Account\\Register.cshtml",
@@ -175,7 +209,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 4,
               "Title": "Login.cshtml",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Views\\Account\\Login.cshtml",
               "RelativeDocumentMoniker": "ResearchHub\\Views\\Account\\Login.cshtml",
@@ -183,12 +217,11 @@
               "RelativeToolTip": "ResearchHub\\Views\\Account\\Login.cshtml",
               "ViewState": "AgIAAC0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-03-31T18:50:42.659Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-31T18:50:42.659Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 7,
               "Title": "AnalisisController.cs",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Controllers\\AnalisisController.cs",
               "RelativeDocumentMoniker": "ResearchHub\\Controllers\\AnalisisController.cs",
@@ -196,12 +229,11 @@
               "RelativeToolTip": "ResearchHub\\Controllers\\AnalisisController.cs",
               "ViewState": "AgIAAIgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-31T18:50:28.576Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-31T18:50:28.576Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 9,
               "Title": "Administracion",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Administracion",
               "RelativeDocumentMoniker": "ResearchHub\\Administracion",
@@ -209,12 +241,11 @@
               "RelativeToolTip": "ResearchHub\\Administracion",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001001|",
-              "WhenOpened": "2026-03-31T18:50:23.83Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-31T18:50:23.83Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 11,
               "Title": "EquiposLaboratorioController.cs",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Controllers\\EquiposLaboratorioController.cs",
               "RelativeDocumentMoniker": "ResearchHub\\Controllers\\EquiposLaboratorioController.cs",
@@ -222,25 +253,24 @@
               "RelativeToolTip": "ResearchHub\\Controllers\\EquiposLaboratorioController.cs",
               "ViewState": "AgIAAAYAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-31T18:50:01.862Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-31T18:50:01.862Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 2,
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Views\\Admin\\Index.cshtml",
               "RelativeDocumentMoniker": "ResearchHub\\Views\\Admin\\Index.cshtml",
               "ToolTip": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Views\\Admin\\Index.cshtml",
               "RelativeToolTip": "ResearchHub\\Views\\Admin\\Index.cshtml",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "ViewState": "AgIAAE0BAAAAAAAAAAAAALsAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
               "WhenOpened": "2026-03-31T18:49:57.033Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 6,
               "Title": "ResearchHubContext.cs",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Data\\ResearchHubContext.cs",
               "RelativeDocumentMoniker": "ResearchHub\\Data\\ResearchHubContext.cs",
@@ -248,12 +278,11 @@
               "RelativeToolTip": "ResearchHub\\Data\\ResearchHubContext.cs",
               "ViewState": "AgIAAD0AAAAAAAAAAAAAAAEAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-13T17:04:27.755Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-13T17:04:27.755Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 5,
               "Title": "AccessDenied.cshtml",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Views\\Account\\AccessDenied.cshtml",
               "RelativeDocumentMoniker": "ResearchHub\\Views\\Account\\AccessDenied.cshtml",
@@ -261,12 +290,11 @@
               "RelativeToolTip": "ResearchHub\\Views\\Account\\AccessDenied.cshtml",
               "ViewState": "AgIAACwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2026-03-17T21:17:32.826Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-17T21:17:32.826Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 12,
               "Title": "GestionController.cs",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Controllers\\GestionController.cs",
               "RelativeDocumentMoniker": "ResearchHub\\Controllers\\GestionController.cs",
@@ -279,7 +307,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 12,
+              "DocumentIndex": 14,
               "Title": "ResultadosController.cs",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Controllers\\ResultadosController.cs",
               "RelativeDocumentMoniker": "ResearchHub\\Controllers\\ResultadosController.cs",
@@ -291,7 +319,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 8,
               "Title": "appsettings.json",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\appsettings.json",
               "RelativeDocumentMoniker": "ResearchHub\\appsettings.json",
@@ -299,12 +327,11 @@
               "RelativeToolTip": "ResearchHub\\appsettings.json",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.001642|",
-              "WhenOpened": "2026-03-13T16:18:41.108Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-13T16:18:41.108Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 13,
               "Title": "CronogramasController.cs",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Controllers\\CronogramasController.cs",
               "RelativeDocumentMoniker": "ResearchHub\\Controllers\\CronogramasController.cs",
@@ -316,7 +343,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 10,
               "Title": "Program.cs",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Program.cs",
               "RelativeDocumentMoniker": "ResearchHub\\Program.cs",
@@ -324,12 +351,11 @@
               "RelativeToolTip": "ResearchHub\\Program.cs",
               "ViewState": "AgIAAGAAAAAAdDsPGaUSwCgAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-03-17T18:24:19.064Z",
-              "EditorCaption": ""
+              "WhenOpened": "2026-03-17T18:24:19.064Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 13,
+              "DocumentIndex": 15,
               "Title": "LineasInvestigacionController.cs",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Controllers\\LineasInvestigacionController.cs",
               "RelativeDocumentMoniker": "ResearchHub\\Controllers\\LineasInvestigacionController.cs",
@@ -341,7 +367,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 14,
+              "DocumentIndex": 16,
               "Title": "AccountController.cs",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Controllers\\AccountController.cs",
               "RelativeDocumentMoniker": "ResearchHub\\Controllers\\AccountController.cs",
@@ -353,7 +379,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 15,
+              "DocumentIndex": 17,
               "Title": "HomeController.cs",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Controllers\\HomeController.cs",
               "RelativeDocumentMoniker": "ResearchHub\\Controllers\\HomeController.cs",
@@ -365,7 +391,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 16,
+              "DocumentIndex": 18,
               "Title": "Index.cshtml",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Views\\Home\\Index.cshtml",
               "RelativeDocumentMoniker": "ResearchHub\\Views\\Home\\Index.cshtml",
@@ -377,7 +403,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 18,
+              "DocumentIndex": 20,
               "Title": "ResearchHub.csproj",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\ResearchHub.csproj",
               "RelativeDocumentMoniker": "ResearchHub\\ResearchHub.csproj",
@@ -389,7 +415,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 17,
+              "DocumentIndex": 19,
               "Title": "Create.cshtml",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Views\\Proyectos\\Create.cshtml",
               "RelativeDocumentMoniker": "ResearchHub\\Views\\Proyectos\\Create.cshtml",
@@ -401,7 +427,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 19,
+              "DocumentIndex": 21,
               "Title": "20260313164638_InitialCreate.cs",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Migrations\\20260313164638_InitialCreate.cs",
               "RelativeDocumentMoniker": "ResearchHub\\Migrations\\20260313164638_InitialCreate.cs",
@@ -413,7 +439,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 20,
+              "DocumentIndex": 22,
               "Title": "Resultado.cs",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Models\\Resultado.cs",
               "RelativeDocumentMoniker": "ResearchHub\\Models\\Resultado.cs",
@@ -425,7 +451,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 21,
+              "DocumentIndex": 23,
               "Title": "RepositorioDatos.cs",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Models\\RepositorioDatos.cs",
               "RelativeDocumentMoniker": "ResearchHub\\Models\\RepositorioDatos.cs",
@@ -437,7 +463,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 22,
+              "DocumentIndex": 24,
               "Title": "Publicacion.cs",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Models\\Publicacion.cs",
               "RelativeDocumentMoniker": "ResearchHub\\Models\\Publicacion.cs",
@@ -449,7 +475,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 23,
+              "DocumentIndex": 25,
               "Title": "Laboratorio.cs",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Models\\Laboratorio.cs",
               "RelativeDocumentMoniker": "ResearchHub\\Models\\Laboratorio.cs",
@@ -461,7 +487,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 24,
+              "DocumentIndex": 26,
               "Title": "LineaInvestigacion.cs",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Models\\LineaInvestigacion.cs",
               "RelativeDocumentMoniker": "ResearchHub\\Models\\LineaInvestigacion.cs",
@@ -473,7 +499,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 25,
+              "DocumentIndex": 27,
               "Title": "Protocolo.cs",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Models\\Protocolo.cs",
               "RelativeDocumentMoniker": "ResearchHub\\Models\\Protocolo.cs",
@@ -485,7 +511,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 26,
+              "DocumentIndex": 28,
               "Title": "Proyecto.cs",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Models\\Proyecto.cs",
               "RelativeDocumentMoniker": "ResearchHub\\Models\\Proyecto.cs",
@@ -497,7 +523,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 27,
+              "DocumentIndex": 29,
               "Title": "Muestra.cs",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Models\\Muestra.cs",
               "RelativeDocumentMoniker": "ResearchHub\\Models\\Muestra.cs",
@@ -509,7 +535,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 28,
+              "DocumentIndex": 30,
               "Title": "Cronograma.cs",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Models\\Cronograma.cs",
               "RelativeDocumentMoniker": "ResearchHub\\Models\\Cronograma.cs",
@@ -521,7 +547,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 29,
+              "DocumentIndex": 31,
               "Title": "Colaborador.cs",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Models\\Colaborador.cs",
               "RelativeDocumentMoniker": "ResearchHub\\Models\\Colaborador.cs",
@@ -533,7 +559,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 30,
+              "DocumentIndex": 32,
               "Title": "Analisis.cs",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Models\\Analisis.cs",
               "RelativeDocumentMoniker": "ResearchHub\\Models\\Analisis.cs",
@@ -545,7 +571,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 31,
+              "DocumentIndex": 33,
               "Title": "EquipoLaboratorio.cs",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Models\\EquipoLaboratorio.cs",
               "RelativeDocumentMoniker": "ResearchHub\\Models\\EquipoLaboratorio.cs",
@@ -557,7 +583,7 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 32,
+              "DocumentIndex": 34,
               "Title": "Experimento.cs",
               "DocumentMoniker": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\Models\\Experimento.cs",
               "RelativeDocumentMoniker": "ResearchHub\\Models\\Experimento.cs",
