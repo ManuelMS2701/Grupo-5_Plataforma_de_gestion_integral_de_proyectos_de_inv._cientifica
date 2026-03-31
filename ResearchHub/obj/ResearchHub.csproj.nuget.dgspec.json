@@ -10,7 +10,7 @@
         "projectUniqueName": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\ResearchHub.csproj",
         "projectName": "ResearchHub",
         "projectPath": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\ResearchHub.csproj",
-        "packagesPath": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\.nuget\\packages",
+        "packagesPath": "C:\\Users\\User\\.nuget\\packages\\",
         "outputPath": "C:\\Users\\User\\Desktop\\ResearchHub\\ResearchHub\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
