@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ResearchHub.Data;
@@ -19,7 +19,9 @@ namespace ResearchHub.Controllers
         public async Task<IActionResult> Index()
         {
             var lineas = await _context.LineasInvestigacion
+                .Include(l => l.Sublineas)
                 .AsNoTracking()
+                .OrderBy(l => l.Nombre)
                 .ToListAsync();
 
             return View(lineas);
@@ -30,6 +32,7 @@ namespace ResearchHub.Controllers
             if (id == null) return NotFound();
 
             var linea = await _context.LineasInvestigacion
+                .Include(l => l.Sublineas)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.IdLinea == id.Value);
 

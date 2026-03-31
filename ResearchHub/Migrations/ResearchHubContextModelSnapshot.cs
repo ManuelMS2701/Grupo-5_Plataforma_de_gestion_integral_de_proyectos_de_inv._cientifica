@@ -310,6 +310,9 @@ namespace ResearchHub.Migrations
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
 
+                    b.Property<bool>("EsHito")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Estado")
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
@@ -320,6 +323,9 @@ namespace ResearchHub.Migrations
                     b.Property<DateTime?>("FechaInicio")
                         .HasColumnType("datetime2");
 
+                    b.Property<int?>("IdDependencia")
+                        .HasColumnType("int");
+
                     b.Property<int>("IdProyecto")
                         .HasColumnType("int");
 
@@ -328,7 +334,24 @@ namespace ResearchHub.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("nvarchar(150)");
 
+                    b.Property<int>("PorcentajeAvance")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Prioridad")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Responsable")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("Riesgo")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.HasKey("IdCronograma");
+
+                    b.HasIndex("IdDependencia");
 
                     b.HasIndex("IdProyecto");
 
@@ -678,6 +701,9 @@ namespace ResearchHub.Migrations
                     b.Property<int>("IdLinea")
                         .HasColumnType("int");
 
+                    b.Property<int?>("IdSublinea")
+                        .HasColumnType("int");
+
                     b.Property<string>("ObjetivoGeneral")
                         .HasMaxLength(2000)
                         .HasColumnType("nvarchar(2000)");
@@ -694,6 +720,8 @@ namespace ResearchHub.Migrations
                     b.HasIndex("IdInvestigadorPrincipal");
 
                     b.HasIndex("IdLinea");
+
+                    b.HasIndex("IdSublinea");
 
                     b.ToTable("Proyectos");
                 });
@@ -806,6 +834,36 @@ namespace ResearchHub.Migrations
                     b.HasIndex("IdVariable");
 
                     b.ToTable("Resultados");
+                });
+
+            modelBuilder.Entity("ResearchHub.Models.SublineaInvestigacion", b =>
+                {
+                    b.Property<int>("IdSublinea")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdSublinea"));
+
+                    b.Property<bool>("Activa")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Descripcion")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<int>("IdLinea")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.HasKey("IdSublinea");
+
+                    b.HasIndex("IdLinea");
+
+                    b.ToTable("SublineasInvestigacion");
                 });
 
             modelBuilder.Entity("ResearchHub.Models.Validacion", b =>
@@ -954,11 +1012,18 @@ namespace ResearchHub.Migrations
 
             modelBuilder.Entity("ResearchHub.Models.Cronograma", b =>
                 {
+                    b.HasOne("ResearchHub.Models.Cronograma", "Dependencia")
+                        .WithMany("Dependientes")
+                        .HasForeignKey("IdDependencia")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("ResearchHub.Models.Proyecto", "Proyecto")
                         .WithMany("Cronogramas")
                         .HasForeignKey("IdProyecto")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Dependencia");
 
                     b.Navigation("Proyecto");
                 });
@@ -1043,11 +1108,18 @@ namespace ResearchHub.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("ResearchHub.Models.SublineaInvestigacion", "SublineaInvestigacion")
+                        .WithMany("Proyectos")
+                        .HasForeignKey("IdSublinea")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.Navigation("Institucion");
 
                     b.Navigation("InvestigadorPrincipal");
 
                     b.Navigation("LineaInvestigacion");
+
+                    b.Navigation("SublineaInvestigacion");
                 });
 
             modelBuilder.Entity("ResearchHub.Models.Publicacion", b =>
@@ -1091,6 +1163,17 @@ namespace ResearchHub.Migrations
                     b.Navigation("Variable");
                 });
 
+            modelBuilder.Entity("ResearchHub.Models.SublineaInvestigacion", b =>
+                {
+                    b.HasOne("ResearchHub.Models.LineaInvestigacion", "LineaInvestigacion")
+                        .WithMany("Sublineas")
+                        .HasForeignKey("IdLinea")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("LineaInvestigacion");
+                });
+
             modelBuilder.Entity("ResearchHub.Models.Validacion", b =>
                 {
                     b.HasOne("ResearchHub.Models.Analisis", "Analisis")
@@ -1105,6 +1188,11 @@ namespace ResearchHub.Migrations
             modelBuilder.Entity("ResearchHub.Models.Analisis", b =>
                 {
                     b.Navigation("Validaciones");
+                });
+
+            modelBuilder.Entity("ResearchHub.Models.Cronograma", b =>
+                {
+                    b.Navigation("Dependientes");
                 });
 
             modelBuilder.Entity("ResearchHub.Models.Experimento", b =>
@@ -1134,6 +1222,8 @@ namespace ResearchHub.Migrations
             modelBuilder.Entity("ResearchHub.Models.LineaInvestigacion", b =>
                 {
                     b.Navigation("Proyectos");
+
+                    b.Navigation("Sublineas");
                 });
 
             modelBuilder.Entity("ResearchHub.Models.Protocolo", b =>
@@ -1159,6 +1249,11 @@ namespace ResearchHub.Migrations
             modelBuilder.Entity("ResearchHub.Models.Resultado", b =>
                 {
                     b.Navigation("Analisis");
+                });
+
+            modelBuilder.Entity("ResearchHub.Models.SublineaInvestigacion", b =>
+                {
+                    b.Navigation("Proyectos");
                 });
 
             modelBuilder.Entity("ResearchHub.Models.Variable", b =>

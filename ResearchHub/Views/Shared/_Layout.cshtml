@@ -1,4 +1,15 @@
 ﻿@using ResearchHub.Models
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var entidadActiva = ViewContext.RouteData.Values["nombre"]?.ToString();
+    var isAuthenticated = User?.Identity?.IsAuthenticated == true;
+    var isAdmin = User?.IsInRole(Roles.Administrador) == true;
+
+    if (string.IsNullOrWhiteSpace(entidadActiva))
+    {
+        entidadActiva = Context?.Request?.Query["nombre"].ToString();
+    }
+}
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -8,181 +19,272 @@
     <script type="importmap"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@400;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/crud.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ResearchHub.styles.css" asp-append-version="true" />
-
     <style>
         :root {
+            --nav-bg: #f9fbff;
+            --nav-soft: #eff4fb;
+            --nav-text: #1e293b;
+            --nav-muted: #64748b;
+            --nav-active: #e1ecfb;
             --ink: #0f172a;
             --muted: #64748b;
-            --accent: #3b82f6;
-            --accent-soft: #e8f0ff;
-            --accent-2: #22c55e;
-            --paper: #f7f8fb;
+            --paper: #f6f8fc;
             --ring: rgba(15, 23, 42, 0.08);
         }
 
         body {
+            margin: 0;
             font-family: "Space Grotesk", system-ui, sans-serif;
+            background: radial-gradient(850px 350px at 100% -5%, #e9f1ff 0%, transparent 62%), var(--paper);
             color: var(--ink);
-            background: radial-gradient(1200px 600px at 10% -10%, #eef3ff 0%, transparent 60%),
-                        radial-gradient(900px 500px at 90% 0%, #f1f8f4 0%, transparent 55%),
-                        var(--paper);
+        }
+
+        .app-shell {
             min-height: 100vh;
+            display: grid;
+            grid-template-columns: 300px 1fr;
         }
 
-        .rh-shell {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
+        .side {
+            background: var(--nav-bg);
+            border-right: 1px solid var(--ring);
+            padding: 18px 12px;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+            gap: 14px;
+            position: sticky;
+            top: 0;
+            height: 100vh;
         }
 
-        .rh-nav {
-            background: rgba(255, 255, 255, 0.95);
-            border-bottom: 1px solid var(--ring);
-            backdrop-filter: blur(8px);
+        .side nav {
+            overflow-y: auto;
+            padding-right: 4px;
         }
 
-        .rh-brand {
+        .brand {
             display: flex;
             align-items: center;
-            gap: 14px;
+            gap: 10px;
+            text-decoration: none;
+            color: #0f172a;
+            padding: 8px 8px 12px;
+            border-bottom: 1px solid var(--ring);
         }
 
-        .rh-brand img {
-            height: 52px;
-            width: auto;
-            display: block;
-            filter: drop-shadow(0 6px 10px rgba(15, 23, 42, 0.15));
+        .brand img {
+            width: 54px;
+            height: 54px;
+            object-fit: contain;
+            border-radius: 10px;
+            background: #fff;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            padding: 3px;
         }
 
-        .rh-brand span {
+        .brand span {
             font-family: "Fraunces", serif;
+            font-size: 1.25rem;
+            letter-spacing: -0.3px;
+        }
+
+        .menu-group {
+            margin-bottom: 12px;
+        }
+
+        .menu-title {
+            color: #475569;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 0.09em;
+            margin: 0 0 7px 10px;
             font-weight: 700;
-            letter-spacing: -0.4px;
-            font-size: 1.15rem;
         }
 
-        .rh-nav .nav-link {
-            color: var(--ink) !important;
+        .menu-link {
+            display: block;
+            color: var(--nav-text);
+            text-decoration: none;
+            padding: 9px 11px;
+            margin-bottom: 5px;
+            border-radius: 10px;
+            border: 1px solid transparent;
             font-weight: 500;
-            margin-right: 6px;
-            border-radius: 999px;
-            padding: 6px 12px;
+            font-size: 0.93rem;
         }
 
-        .rh-nav .nav-link:hover {
-            color: #1d4ed8 !important;
-            background: var(--accent-soft);
+        .menu-link:hover {
+            background: var(--nav-soft);
+            border-color: rgba(148, 163, 184, 0.22);
+            color: #0f172a;
         }
 
-        .rh-nav .nav-link.active {
-            color: #1d4ed8 !important;
-            background: var(--accent-soft);
+        .menu-link.active {
+            background: var(--nav-active);
+            border-color: rgba(96, 165, 250, 0.2);
+            color: #0f172a;
         }
 
-        .rh-main {
-            flex: 1;
+        .side-user {
+            border-top: 1px solid var(--ring);
+            padding-top: 12px;
+            font-size: 0.9rem;
+            color: var(--nav-muted);
         }
 
-        .rh-footer {
+        .side-btn {
+            width: 100%;
+            margin-top: 10px;
+            border: 1px solid rgba(15, 23, 42, 0.15);
+            background: #fff;
+            color: #1e293b;
+            border-radius: 10px;
+            padding: 8px 10px;
+            font-weight: 600;
+        }
+
+        .main {
+            display: grid;
+            grid-template-rows: 1fr auto;
+            min-width: 0;
+        }
+
+        .content {
+            padding: 20px 24px 28px;
+        }
+
+        .footer {
             border-top: 1px solid var(--ring);
             color: var(--muted);
             font-size: 0.9rem;
-            background: rgba(255, 255, 255, 0.85);
+            background: rgba(255, 255, 255, 0.75);
+            padding: 11px 24px;
         }
 
-        .rh-footer a {
-            color: var(--muted);
+        .mobile-top {
+            display: none;
         }
 
-        .rh-footer a:hover {
-            color: #1d4ed8;
-        }
+        @@media (max-width: 1060px) {
+            .app-shell {
+                grid-template-columns: 1fr;
+            }
 
-        @@media (max-width: 900px) {
-            .rh-brand span {
+            .side {
                 display: none;
+            }
+
+            .mobile-top {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 8px;
+                padding: 10px 14px;
+                border-bottom: 1px solid var(--ring);
+                background: #fff;
+                position: sticky;
+                top: 0;
+                z-index: 10;
+            }
+
+            .mobile-top a {
+                text-decoration: none;
+                color: #1e293b;
+                font-weight: 600;
             }
         }
     </style>
 </head>
 <body>
-    <div class="rh-shell">
-        <header class="rh-nav">
-            <nav class="navbar navbar-expand-sm navbar-toggleable-sm">
-                <div class="container-fluid">
-                    <a class="navbar-brand rh-brand" asp-area="" asp-controller="Home" asp-action="Index">
-                        <img src="~/images/logo.png" alt="ResearchHub" />
-                        <span>ResearchHub</span>
-                    </a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                            aria-expanded="false" aria-label="Toggle navigation">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                        <ul class="navbar-nav flex-grow-1">
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Index">Inicio</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Proyectos" asp-action="Index">Proyectos</a>
-                            </li>
-                            @if (User.IsInRole(Roles.Administrador))
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Admin" asp-action="Index">Administración</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Instituciones" asp-action="Index">Instituciones</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="Investigadores" asp-action="Index">Investigadores</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-area="" asp-controller="LineasInvestigacion" asp-action="Index">Líneas</a>
-                                </li>
-                            }
-                        </ul>
-                        <ul class="navbar-nav">
-                            @if (User?.Identity?.IsAuthenticated == true)
-                            {
-                                <li class="nav-item">
-                                    <span class="nav-link">Hola, @User.Identity?.Name</span>
-                                </li>
-                                <li class="nav-item">
-                                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
-                                        @Html.AntiForgeryToken()
-                                        <button type="submit" class="nav-link btn btn-link" style="padding:6px 12px;">Salir</button>
-                                    </form>
-                                </li>
-                            }
-                            else
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Account" asp-action="Login">Ingresar</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Account" asp-action="Register">Registrarse</a>
-                                </li>
-                            }
-                        </ul>
-                    </div>
+    <div class="mobile-top">
+        <a asp-controller="Home" asp-action="Index">ResearchHub</a>
+        @if (isAdmin)
+        {
+            <span>@User.Identity?.Name</span>
+        }
+    </div>
+
+    <div class="app-shell">
+        <aside class="side">
+            <a class="brand" asp-controller="Home" asp-action="Index">
+                <img src="~/Images/Logo.png" alt="ResearchHub" />
+                <span>ResearchHub</span>
+            </a>
+
+            <nav>
+                <div class="menu-group">
+                    <p class="menu-title">General</p>
+                    <a class="menu-link @(controller == "Home" ? "active" : "")" asp-controller="Home" asp-action="Index">Inicio</a>
+                    <a class="menu-link @(controller == "Proyectos" ? "active" : "")" asp-controller="Proyectos" asp-action="Index">Proyectos</a>
+                    <a class="menu-link @(controller == "Busqueda" ? "active" : "")" asp-controller="Busqueda" asp-action="Index">Busqueda global</a>
                 </div>
+
+                @if (isAdmin)
+                {
+                    <div class="menu-group">
+                        <p class="menu-title">Ejecucion cientifica</p>
+                        <a class="menu-link @(controller == "Experimentos" ? "active" : "")" asp-controller="Experimentos" asp-action="Index">Experimentos</a>
+                        <a class="menu-link @(controller == "Muestras" ? "active" : "")" asp-controller="Muestras" asp-action="Index">Muestras</a>
+                        <a class="menu-link @(controller == "Laboratorios" ? "active" : "")" asp-controller="Laboratorios" asp-action="Index">Laboratorios</a>
+                        <a class="menu-link @(controller == "EquiposLaboratorio" ? "active" : "")" asp-controller="EquiposLaboratorio" asp-action="Index">Equipos</a>
+                        <a class="menu-link @(controller == "Protocolos" ? "active" : "")" asp-controller="Protocolos" asp-action="Index">Protocolos</a>
+                    </div>
+
+                    <div class="menu-group">
+                        <p class="menu-title">Datos y calidad</p>
+                        <a class="menu-link @(controller == "Variables" ? "active" : "")" asp-controller="Variables" asp-action="Index">Variables</a>
+                        <a class="menu-link @(controller == "Resultados" ? "active" : "")" asp-controller="Resultados" asp-action="Index">Resultados</a>
+                        <a class="menu-link @(controller == "Analisis" ? "active" : "")" asp-controller="Analisis" asp-action="Index">Analisis</a>
+                        <a class="menu-link @(controller == "Validaciones" ? "active" : "")" asp-controller="Validaciones" asp-action="Index">Validaciones</a>
+                        <a class="menu-link @(controller == "RepositoriosDatos" ? "active" : "")" asp-controller="RepositoriosDatos" asp-action="Index">Repositorios</a>
+                        <a class="menu-link @(controller == "Publicaciones" ? "active" : "")" asp-controller="Publicaciones" asp-action="Index">Publicaciones</a>
+                    </div>
+                }
+
+                @if (isAdmin)
+                {
+                    <div class="menu-group">
+                        <p class="menu-title">Administracion</p>
+                        <a class="menu-link @(controller == "Admin" ? "active" : "")" asp-controller="Admin" asp-action="Index">Panel admin</a>
+                        <a class="menu-link @(controller == "Instituciones" ? "active" : "")" asp-controller="Instituciones" asp-action="Index">Instituciones</a>
+                        <a class="menu-link @(controller == "Investigadores" ? "active" : "")" asp-controller="Investigadores" asp-action="Index">Investigadores</a>
+                        <a class="menu-link @(controller == "LineasInvestigacion" ? "active" : "")" asp-controller="LineasInvestigacion" asp-action="Index">Lineas de investigacion</a>
+                        <a class="menu-link @(controller == "SublineasInvestigacion" ? "active" : "")" asp-controller="SublineasInvestigacion" asp-action="Index">Sublineas</a>
+                        <a class="menu-link @(controller == "Colaboradores" ? "active" : "")" asp-controller="Colaboradores" asp-action="Index">Colaboradores</a>
+                        <a class="menu-link @(controller == "Cronogramas" ? "active" : "")" asp-controller="Cronogramas" asp-action="Index">Cronogramas</a>
+                    </div>
+                }
             </nav>
-        </header>
 
-        <div class="rh-main">
-            @RenderBody()
-        </div>
-
-        <footer class="rh-footer">
-            <div class="container py-3">
-                &copy; 2026 - ResearchHub
+            <div class="side-user">
+                @if (isAuthenticated)
+                {
+                    <div>Sesion: @User.Identity?.Name</div>
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="side-btn">Cerrar sesion</button>
+                    </form>
+                }
+                else
+                {
+                    <a class="menu-link" asp-controller="Account" asp-action="Login">Iniciar sesion</a>
+                }
             </div>
-        </footer>
+        </aside>
+
+        <div class="main">
+            <main class="content">
+                @RenderBody()
+            </main>
+            <footer class="footer">
+                &copy; 2026 - ResearchHub
+            </footer>
+        </div>
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
@@ -191,3 +293,14 @@
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+

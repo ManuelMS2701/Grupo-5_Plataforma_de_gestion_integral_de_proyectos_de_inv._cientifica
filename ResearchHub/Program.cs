@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using ResearchHub.Models;
 
@@ -15,6 +15,10 @@ builder.Services.AddIdentity<ResearchHub.Models.ApplicationUser, IdentityRole>(o
     options.Password.RequireLowercase = false;
     options.Password.RequireUppercase = false;
     options.Password.RequireNonAlphanumeric = false;
+
+    options.Lockout.MaxFailedAccessAttempts = 5;
+    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+    options.Lockout.AllowedForNewUsers = true;
 })
     .AddEntityFrameworkStores<ResearchHub.Data.ResearchHubContext>()
     .AddDefaultTokenProviders();
@@ -105,3 +109,5 @@ static async Task EnsureRolesAndAdminAsync(
         await userManager.AddToRoleAsync(admin, Roles.Administrador);
     }
 }
+
+

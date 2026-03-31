@@ -2,6 +2,7 @@
 
 @{
     ViewData["Title"] = "Detalles de línea";
+    var sublineas = Model.Sublineas.OrderBy(s => s.Nombre).ToList();
 }
 
 <style>
@@ -98,6 +99,10 @@
             <div class="rh-field" style="grid-column: 1 / -1;">
                 <span class="rh-label">Descripción</span>
                 <span class="rh-value">@Model.Descripcion</span>
+            </div>
+            <div class="rh-field" style="grid-column: 1 / -1;">
+                <span class="rh-label">Sublíneas</span>
+                <span class="rh-value">@(sublineas.Any() ? string.Join(", ", sublineas.Select(s => s.Nombre)) : "Sin sublineas")</span>
             </div>
         </div>
 

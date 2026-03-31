@@ -224,4 +224,4 @@ C:\Users\User\Desktop\ResearchHub\ResearchHub\bin\Debug\net10.0\runtimes\win-x64
 C:\Users\User\Desktop\ResearchHub\ResearchHub\bin\Debug\net10.0\runtimes\win-x86\native\Microsoft.Data.SqlClient.SNI.dll
 C:\Users\User\Desktop\ResearchHub\ResearchHub\bin\Debug\net10.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
 C:\Users\User\Desktop\ResearchHub\ResearchHub\obj\Debug\net10.0\ResearchHub.sourcelink.json
-C:\Users\User\Desktop\ResearchHub\ResearchHub\obj\Debug\net10.0\staticwebassets.upToDateCheck.txt
+C:\Users\User\Desktop\ResearchHub\ResearchHub\obj\Debug\net10.0\compressed\e2rw8rfnqi-{0}-zd2mrd7wpg-zd2mrd7wpg.gz

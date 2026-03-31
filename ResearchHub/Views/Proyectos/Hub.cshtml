@@ -1,0 +1,83 @@
+﻿@model ResearchHub.Models.ProyectoHubViewModel
+
+@{
+    ViewData["Title"] = "Hub del proyecto";
+}
+
+<div class="rh-list-wrap">
+    <div class="rh-list-header">
+        <div>
+            <h1 class="rh-list-title">Hub: @Model.Proyecto.Titulo</h1>
+            <p class="rh-meta">Acceso: <span class="rh-pill">@Model.NivelAcceso</span></p>
+        </div>
+        <a class="rh-btn rh-btn-secondary" asp-controller="Proyectos" asp-action="Details" asp-route-id="@Model.Proyecto.IdProyecto">Volver al proyecto</a>
+    </div>
+
+    <div class="rh-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 14px;">
+        <div class="rh-field"><span class="rh-field-label">Experimentos</span><span class="rh-field-value">@Model.TotalExperimentos</span></div>
+        <div class="rh-field"><span class="rh-field-label">Muestras</span><span class="rh-field-value">@Model.TotalMuestras</span></div>
+        <div class="rh-field"><span class="rh-field-label">Resultados</span><span class="rh-field-value">@Model.TotalResultados</span></div>
+        <div class="rh-field"><span class="rh-field-label">Análisis</span><span class="rh-field-value">@Model.TotalAnalisis</span></div>
+        <div class="rh-field"><span class="rh-field-label">Validaciones</span><span class="rh-field-value">@Model.TotalValidaciones</span></div>
+        <div class="rh-field"><span class="rh-field-label">Publicaciones</span><span class="rh-field-value">@Model.TotalPublicaciones</span></div>
+        <div class="rh-field"><span class="rh-field-label">Repositorios</span><span class="rh-field-value">@Model.TotalRepositorios</span></div>
+        <div class="rh-field"><span class="rh-field-label">Colaboradores</span><span class="rh-field-value">@Model.TotalColaboradores</span></div>
+    </div>
+
+    <div class="rh-grid" style="grid-template-columns: 1fr 1fr; gap: 14px;">
+        <div class="rh-card">
+            <h3 class="rh-list-title" style="font-size:1.2rem;">Cronograma estratégico</h3>
+            <p class="rh-meta">Total fases: @Model.TotalCronograma · Hitos pendientes: @Model.HitosPendientes · Hitos completados: @Model.HitosCompletados</p>
+            @if (!Model.ProximosHitos.Any())
+            {
+                <p class="rh-meta">No hay hitos definidos aún.</p>
+            }
+            else
+            {
+                <div class="rh-table">
+                    <table class="table">
+                        <thead><tr><th>Hito</th><th>Fecha</th><th>Estado</th><th>Avance</th></tr></thead>
+                        <tbody>
+                        @foreach (var h in Model.ProximosHitos)
+                        {
+                            <tr>
+                                <td>@h.NombreFase</td>
+                                <td>@(h.FechaFin?.ToString("yyyy-MM-dd") ?? h.FechaInicio?.ToString("yyyy-MM-dd"))</td>
+                                <td>@h.Estado</td>
+                                <td>@h.PorcentajeAvance%</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+
+        <div class="rh-card">
+            <h3 class="rh-list-title" style="font-size:1.2rem;">Actividad reciente</h3>
+            @if (!Model.EventosRecientes.Any())
+            {
+                <p class="rh-meta">Sin actividad reciente.</p>
+            }
+            else
+            {
+                <div class="rh-table">
+                    <table class="table">
+                        <thead><tr><th>Tipo</th><th>Título</th><th>Fecha</th><th>Detalle</th></tr></thead>
+                        <tbody>
+                        @foreach (var e in Model.EventosRecientes)
+                        {
+                            <tr>
+                                <td><span class="rh-pill">@e.Tipo</span></td>
+                                <td>@e.Titulo</td>
+                                <td>@e.Fecha.ToString("yyyy-MM-dd")</td>
+                                <td>@e.Detalle</td>
+                            </tr>
+                        }
+                        </tbody>
+                    </table>
+                </div>
+            }
+        </div>
+    </div>
+</div>

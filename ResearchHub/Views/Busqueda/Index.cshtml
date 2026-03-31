@@ -1,0 +1,57 @@
+﻿@model ResearchHub.Models.GlobalSearchViewModel
+@{
+    ViewData["Title"] = "Busqueda global";
+}
+
+<div class="rh-list-wrap">
+    <div class="rh-list-header">
+        <h1 class="rh-list-title">Busqueda global</h1>
+    </div>
+
+    <form method="get" class="rh-toolbar">
+        <input class="form-control" type="text" name="q" value="@Model.Query" placeholder="Buscar en proyectos, experimentos, publicaciones, repositorios, colaboradores y validaciones" />
+        <button class="rh-btn" type="submit">Buscar</button>
+    </form>
+
+    @if (string.IsNullOrWhiteSpace(Model.Query))
+    {
+        <div class="rh-meta">Escribe un termino para iniciar la busqueda global.</div>
+    }
+    else
+    {
+        <div class="rh-meta">@Model.Hits.Count resultado(s) para "@Model.Query".</div>
+
+        <div class="rh-table">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Modulo</th>
+                        <th>Titulo</th>
+                        <th>Detalle</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                @if (!Model.Hits.Any())
+                {
+                    <tr><td colspan="4" class="rh-empty">No se encontraron coincidencias.</td></tr>
+                }
+                else
+                {
+                    @foreach (var hit in Model.Hits)
+                    {
+                        <tr>
+                            <td><span class="rh-pill">@hit.Modulo</span></td>
+                            <td>@hit.Titulo</td>
+                            <td>@hit.Subtitulo</td>
+                            <td class="rh-row-actions">
+                                <a asp-controller="@hit.Controller" asp-action="@hit.Action" asp-route-id="@hit.Id">Abrir</a>
+                            </td>
+                        </tr>
+                    }
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

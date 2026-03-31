@@ -1,0 +1,206 @@
+@model ResearchHub.Models.EntidadRoadmapViewModel
+@{
+    var entidad = Model ?? new ResearchHub.Models.EntidadRoadmapViewModel
+    {
+        Nombre = "Modulo",
+        Estado = "Planeado",
+        Madurez = "Inicial",
+        Objetivo = "Sin datos de entidad."
+    };
+
+    ViewData["Title"] = entidad.Nombre;
+}
+
+<style>
+    .mod-shell {
+        max-width: 1080px;
+        margin: 0 auto;
+        padding: 18px 6px 30px;
+        font-family: "Space Grotesk", system-ui, sans-serif;
+    }
+
+    .mod-card {
+        background: #fff;
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 16px;
+        padding: 22px;
+        box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
+    }
+
+    .mod-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-bottom: 14px;
+    }
+
+    .mod-title {
+        font-family: "Fraunces", serif;
+        margin: 0;
+        color: #0f172a;
+        font-size: clamp(1.8rem, 3.3vw, 2.4rem);
+    }
+
+    .mod-status-wrap {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .mod-pill {
+        border-radius: 999px;
+        padding: 6px 10px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        border: 1px solid rgba(14, 116, 144, 0.2);
+        background: #ecfeff;
+        color: #0e7490;
+    }
+
+    .mod-pill-alt {
+        border-color: rgba(59, 130, 246, 0.2);
+        background: #eff6ff;
+        color: #1d4ed8;
+    }
+
+    .mod-desc {
+        margin: 0 0 18px;
+        color: #64748b;
+    }
+
+    .mod-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .mod-col {
+        border: 1px solid rgba(15, 23, 42, 0.08);
+        border-radius: 14px;
+        padding: 14px;
+        background: #f8fafc;
+    }
+
+    .mod-col h2 {
+        margin: 0 0 10px;
+        font-size: 1.05rem;
+        color: #0f172a;
+    }
+
+    .mod-list {
+        margin: 0;
+        padding-left: 18px;
+        color: #334155;
+    }
+
+    .mod-list li {
+        margin-bottom: 8px;
+    }
+
+    .mod-link {
+        display: inline-block;
+        margin-top: 16px;
+        text-decoration: none;
+        font-weight: 600;
+        color: #1d4ed8;
+    }
+
+    @@media (max-width: 860px) {
+        .mod-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+</style>
+
+<div class="mod-shell">
+    <section class="mod-card">
+        <header class="mod-head">
+            <h1 class="mod-title">@entidad.Nombre</h1>
+            <div class="mod-status-wrap">
+                <span class="mod-pill">@entidad.Estado</span>
+                <span class="mod-pill mod-pill-alt">Madurez: @entidad.Madurez</span>
+            </div>
+        </header>
+
+        <p class="mod-desc">@entidad.Objetivo</p>
+
+        <div class="mod-grid">
+            <article class="mod-col">
+                <h2>Funciones clave</h2>
+                <ul class="mod-list">
+                    @if (entidad.Funciones.Count == 0)
+                    {
+                        <li>Sin funciones definidas todavia.</li>
+                    }
+                    else
+                    {
+                        @foreach (var item in entidad.Funciones)
+                        {
+                            <li>@item</li>
+                        }
+                    }
+                </ul>
+            </article>
+
+            <article class="mod-col">
+                <h2>Caracteristicas de plataforma</h2>
+                <ul class="mod-list">
+                    @if (entidad.Caracteristicas.Count == 0)
+                    {
+                        <li>Sin caracteristicas definidas todavia.</li>
+                    }
+                    else
+                    {
+                        @foreach (var item in entidad.Caracteristicas)
+                        {
+                            <li>@item</li>
+                        }
+                    }
+                </ul>
+            </article>
+
+            <article class="mod-col">
+                <h2>Practicas de plataformas similares</h2>
+                <ul class="mod-list">
+                    @if (entidad.PracticasReferencia.Count == 0)
+                    {
+                        <li>Sin referencias de mercado en esta entidad.</li>
+                    }
+                    else
+                    {
+                        @foreach (var item in entidad.PracticasReferencia)
+                        {
+                            <li>@item</li>
+                        }
+                    }
+                </ul>
+            </article>
+
+            <article class="mod-col">
+                <h2>Brechas y acciones prioritarias</h2>
+                <ul class="mod-list">
+                    @if (entidad.BrechasActuales.Count == 0 && entidad.AccionesPrioritarias.Count == 0)
+                    {
+                        <li>Sin brechas priorizadas por ahora.</li>
+                    }
+                    else
+                    {
+                        @foreach (var item in entidad.BrechasActuales)
+                        {
+                            <li>Brecha: @item</li>
+                        }
+
+                        @foreach (var item in entidad.AccionesPrioritarias)
+                        {
+                            <li>Accion: @item</li>
+                        }
+                    }
+                </ul>
+            </article>
+        </div>
+
+        <a class="mod-link" asp-controller="Admin" asp-action="Index">Volver al panel administrativo</a>
+    </section>
+</div>

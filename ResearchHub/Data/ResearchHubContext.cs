@@ -13,6 +13,7 @@ namespace ResearchHub.Data
         public DbSet<Investigador> Investigadores => Set<Investigador>();
         public DbSet<Proyecto> Proyectos => Set<Proyecto>();
         public DbSet<LineaInvestigacion> LineasInvestigacion => Set<LineaInvestigacion>();
+        public DbSet<SublineaInvestigacion> SublineasInvestigacion => Set<SublineaInvestigacion>();
         public DbSet<Experimento> Experimentos => Set<Experimento>();
         public DbSet<Muestra> Muestras => Set<Muestra>();
         public DbSet<Laboratorio> Laboratorios => Set<Laboratorio>();
@@ -49,6 +50,18 @@ namespace ResearchHub.Data
                 .WithMany(l => l.Proyectos)
                 .HasForeignKey(p => p.IdLinea)
                 .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Proyecto>()
+                .HasOne(p => p.SublineaInvestigacion)
+                .WithMany(s => s.Proyectos)
+                .HasForeignKey(p => p.IdSublinea)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<SublineaInvestigacion>()
+                .HasOne(s => s.LineaInvestigacion)
+                .WithMany(l => l.Sublineas)
+                .HasForeignKey(s => s.IdLinea)
+                .OnDelete(DeleteBehavior.Cascade);
 
             modelBuilder.Entity<Investigador>()
                 .HasOne(i => i.Institucion)
@@ -133,6 +146,12 @@ namespace ResearchHub.Data
                 .WithMany(p => p.Cronogramas)
                 .HasForeignKey(c => c.IdProyecto)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Cronograma>()
+                .HasOne(c => c.Dependencia)
+                .WithMany(c => c.Dependientes)
+                .HasForeignKey(c => c.IdDependencia)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

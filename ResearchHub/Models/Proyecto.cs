@@ -35,9 +35,13 @@ namespace ResearchHub.Models
         [ForeignKey(nameof(LineaInvestigacion))]
         public int IdLinea { get; set; }
 
+        [ForeignKey(nameof(SublineaInvestigacion))]
+        public int? IdSublinea { get; set; }
+
         public Investigador? InvestigadorPrincipal { get; set; }
         public Institucion? Institucion { get; set; }
         public LineaInvestigacion? LineaInvestigacion { get; set; }
+        public SublineaInvestigacion? SublineaInvestigacion { get; set; }
 
         public ICollection<Experimento> Experimentos { get; set; } = new List<Experimento>();
         public ICollection<Muestra> Muestras { get; set; } = new List<Muestra>();

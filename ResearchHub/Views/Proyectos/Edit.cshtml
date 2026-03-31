@@ -130,6 +130,14 @@
                     <select class="form-select rh-input" asp-for="IdLinea" asp-items="@(ViewData["Lineas"] as SelectList)"></select>
                 </div>
 
+                <div>
+                    <label class="rh-label">Sublínea de investigación</label>
+                    <select class="form-select rh-input" asp-for="IdSublinea" asp-items="@(ViewData["Sublineas"] as SelectList)">
+                        <option value="">Sin sublínea</option>
+                    </select>
+                    <span class="text-danger" asp-validation-for="IdSublinea"></span>
+                </div>
+
                 <div class="rh-grid-full">
                     <label class="rh-label" asp-for="Descripcion"></label>
                     <textarea class="form-control rh-input" asp-for="Descripcion" rows="3"></textarea>
@@ -148,3 +156,7 @@
         </form>
     </div>
 </div>
+
+
+
+

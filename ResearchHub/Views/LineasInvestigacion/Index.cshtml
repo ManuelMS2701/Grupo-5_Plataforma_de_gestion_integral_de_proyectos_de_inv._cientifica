@@ -49,21 +49,9 @@
         box-shadow: 0 12px 24px rgba(15,23,42,0.06);
     }
 
-    .rh-table table {
-        width: 100%;
-        margin: 0;
-    }
-
-    .rh-table thead {
-        background: #f7f9fc;
-        color: #475569;
-        font-size: 0.9rem;
-    }
-
-    .rh-table th, .rh-table td {
-        padding: 14px 16px;
-        vertical-align: middle;
-    }
+    .rh-table table { width: 100%; margin: 0; }
+    .rh-table thead { background: #f7f9fc; color: #475569; font-size: 0.9rem; }
+    .rh-table th, .rh-table td { padding: 14px 16px; vertical-align: middle; }
 
     .rh-pill {
         display: inline-flex;
@@ -85,23 +73,15 @@
     }
 
     .rh-actions a:hover { text-decoration: underline; }
-
-    @@media (max-width: 900px) {
-        .rh-list-header {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-        .rh-table th:nth-child(3),
-        .rh-table td:nth-child(3) {
-            display: none;
-        }
-    }
 </style>
 
 <div class="rh-list-wrap">
     <div class="rh-list-header">
         <h1 class="rh-list-title">Líneas de investigación</h1>
-        <a class="rh-btn" asp-controller="LineasInvestigacion" asp-action="Create">Nueva línea</a>
+        <div style="display:flex; gap:10px;">
+            <a class="rh-btn" asp-controller="SublineasInvestigacion" asp-action="Index">Sublíneas</a>
+            <a class="rh-btn" asp-controller="LineasInvestigacion" asp-action="Create">Nueva línea</a>
+        </div>
     </div>
 
     <div class="rh-table">
@@ -111,6 +91,7 @@
                     <th>Nombre</th>
                     <th>Descripción</th>
                     <th>Activa</th>
+                    <th>Sublineas</th>
                     <th></th>
                 </tr>
             </thead>
@@ -120,9 +101,8 @@
                 <tr>
                     <td>@item.Nombre</td>
                     <td>@item.Descripcion</td>
-                    <td>
-                        <span class="rh-pill">@(item.Activa ? "Sí" : "No")</span>
-                    </td>
+                    <td><span class="rh-pill">@(item.Activa ? "Sí" : "No")</span></td>
+                    <td><span class="rh-pill">@item.Sublineas.Count</span></td>
                     <td class="rh-actions">
                         <a asp-action="Edit" asp-route-id="@item.IdLinea">Editar</a>
                         <a asp-action="Details" asp-route-id="@item.IdLinea">Detalles</a>

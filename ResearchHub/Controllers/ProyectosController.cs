@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +10,14 @@ namespace ResearchHub.Controllers
     [Authorize]
     public class ProyectosController : Controller
     {
+        private enum NivelAcceso
+        {
+            Ninguno = 0,
+            Read = 1,
+            Write = 2,
+            Admin = 3
+        }
+
         private readonly ResearchHubContext _context;
 
         public ProyectosController(ResearchHubContext context)
@@ -17,11 +25,69 @@ namespace ResearchHub.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(string? search, string? estado, bool misProyectos = false)
         {
-            var proyectos = await _context.Proyectos
+            var isAdmin = User.IsInRole(Roles.Administrador);
+            var userEmail = User.Identity?.Name;
+
+            if (!isAdmin)
+            {
+                misProyectos = true;
+            }
+
+            var query = _context.Proyectos
                 .Include(p => p.Institucion)
+                .Include(p => p.InvestigadorPrincipal)
+                .Include(p => p.SublineaInvestigacion)
                 .AsNoTracking()
+                .AsQueryable();
+
+            if (misProyectos)
+            {
+                if (string.IsNullOrWhiteSpace(userEmail))
+                {
+                    query = query.Where(_ => false);
+                }
+                else
+                {
+                    query = query.Where(p =>
+                        (p.InvestigadorPrincipal != null && p.InvestigadorPrincipal.Email == userEmail) ||
+                        p.Colaboradores.Any(c => c.Email == userEmail));
+                }
+            }
+
+            if (!string.IsNullOrWhiteSpace(search))
+            {
+                var term = search.Trim();
+                query = query.Where(p =>
+                    p.Titulo.Contains(term) ||
+                    (p.Descripcion != null && p.Descripcion.Contains(term)) ||
+                    (p.Institucion != null && p.Institucion.Nombre.Contains(term)) ||
+                    (p.SublineaInvestigacion != null && p.SublineaInvestigacion.Nombre.Contains(term)));
+            }
+
+            if (!string.IsNullOrWhiteSpace(estado))
+            {
+                query = query.Where(p => p.Estado == estado);
+            }
+
+            var proyectos = await query
+                .OrderByDescending(p => p.FechaCreacion)
+                .ToListAsync();
+
+            var permisos = await ConstruirPermisosAsync(proyectos, userEmail, isAdmin);
+
+            ViewData["Search"] = search;
+            ViewData["Estado"] = estado;
+            ViewData["MisProyectos"] = misProyectos;
+            ViewData["PuedeCrearProyecto"] = isAdmin;
+            ViewData["PermisosProyecto"] = permisos;
+            ViewData["Estados"] = await _context.Proyectos
+                .AsNoTracking()
+                .Where(p => !string.IsNullOrWhiteSpace(p.Estado))
+                .Select(p => p.Estado!)
+                .Distinct()
+                .OrderBy(e => e)
                 .ToListAsync();
 
             return View(proyectos);
@@ -35,12 +101,168 @@ namespace ResearchHub.Controllers
                 .Include(p => p.Institucion)
                 .Include(p => p.InvestigadorPrincipal)
                 .Include(p => p.LineaInvestigacion)
+                .Include(p => p.SublineaInvestigacion)
                 .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.IdProyecto == id.Value);
 
             if (proyecto == null) return NotFound();
 
+            var isAdmin = User.IsInRole(Roles.Administrador);
+            var nivel = await ObtenerNivelAccesoAsync(id.Value, User.Identity?.Name, isAdmin);
+            if (nivel == NivelAcceso.Ninguno)
+            {
+                return Forbid();
+            }
+
+            ViewData["NivelAcceso"] = NivelComoTexto(nivel);
+            ViewData["PuedeEditarProyecto"] = nivel >= NivelAcceso.Write || isAdmin;
+
             return View(proyecto);
+        }
+
+        public async Task<IActionResult> Hub(int id)
+        {
+            var proyecto = await _context.Proyectos
+                .Include(p => p.Institucion)
+                .Include(p => p.InvestigadorPrincipal)
+                .Include(p => p.LineaInvestigacion)
+                .Include(p => p.SublineaInvestigacion)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.IdProyecto == id);
+
+            if (proyecto == null) return NotFound();
+
+            var isAdmin = User.IsInRole(Roles.Administrador);
+            var nivel = await ObtenerNivelAccesoAsync(id, User.Identity?.Name, isAdmin);
+            if (nivel == NivelAcceso.Ninguno)
+            {
+                return Forbid();
+            }
+
+            var experimentoIds = await _context.Experimentos
+                .AsNoTracking()
+                .Where(e => e.IdProyecto == id)
+                .Select(e => e.IdExperimento)
+                .ToListAsync();
+
+            var resultadoIds = await _context.Resultados
+                .AsNoTracking()
+                .Where(r => experimentoIds.Contains(r.IdExperimento))
+                .Select(r => r.IdResultado)
+                .ToListAsync();
+
+            var analisisIds = await _context.Analisis
+                .AsNoTracking()
+                .Where(a => resultadoIds.Contains(a.IdResultado))
+                .Select(a => a.IdAnalisis)
+                .ToListAsync();
+
+            var totalExperimentos = experimentoIds.Count;
+            var totalMuestras = await _context.Muestras.AsNoTracking().CountAsync(m => m.IdProyecto == id);
+            var totalResultados = resultadoIds.Count;
+            var totalAnalisis = analisisIds.Count;
+            var totalValidaciones = await _context.Validaciones.AsNoTracking().CountAsync(v => analisisIds.Contains(v.IdAnalisis));
+            var totalPublicaciones = await _context.Publicaciones.AsNoTracking().CountAsync(p => p.IdProyecto == id);
+            var totalRepositorios = await _context.RepositoriosDatos.AsNoTracking().CountAsync(r => r.IdProyecto == id);
+            var totalColaboradores = await _context.Colaboradores.AsNoTracking().CountAsync(c => c.IdProyecto == id);
+            var totalCronograma = await _context.Cronogramas.AsNoTracking().CountAsync(c => c.IdProyecto == id);
+
+            var hitosPendientes = await _context.Cronogramas.AsNoTracking()
+                .CountAsync(c => c.IdProyecto == id && c.EsHito && (c.Estado == null || !c.Estado.ToLower().Contains("complet")));
+            var hitosCompletados = await _context.Cronogramas.AsNoTracking()
+                .CountAsync(c => c.IdProyecto == id && c.EsHito && c.Estado != null && c.Estado.ToLower().Contains("complet"));
+
+            var proximosHitos = await _context.Cronogramas
+                .AsNoTracking()
+                .Where(c => c.IdProyecto == id && c.EsHito)
+                .OrderBy(c => c.FechaFin ?? c.FechaInicio)
+                .Take(5)
+                .ToListAsync();
+
+            var eventos = new List<HubEventoItem>();
+
+            var eventosResultados = await _context.Resultados
+                .AsNoTracking()
+                .Include(r => r.Experimento)
+                .Where(r => experimentoIds.Contains(r.IdExperimento))
+                .OrderByDescending(r => r.FechaRegistro)
+                .Take(4)
+                .Select(r => new HubEventoItem
+                {
+                    Tipo = "Resultado",
+                    Titulo = $"Resultado #{r.IdResultado}",
+                    Fecha = r.FechaRegistro,
+                    Detalle = r.Experimento != null ? r.Experimento.Titulo : null
+                })
+                .ToListAsync();
+
+            var eventosPublicaciones = await _context.Publicaciones
+                .AsNoTracking()
+                .Where(p => p.IdProyecto == id && p.FechaPublicacion != null)
+                .OrderByDescending(p => p.FechaPublicacion)
+                .Take(4)
+                .Select(p => new HubEventoItem
+                {
+                    Tipo = "Publicación",
+                    Titulo = p.Titulo,
+                    Fecha = p.FechaPublicacion ?? DateTime.MinValue,
+                    Detalle = p.Revista
+                })
+                .ToListAsync();
+
+            var eventosValidaciones = await _context.Validaciones
+                .AsNoTracking()
+                .Where(v => analisisIds.Contains(v.IdAnalisis) && v.Fecha != null)
+                .OrderByDescending(v => v.Fecha)
+                .Take(4)
+                .Select(v => new HubEventoItem
+                {
+                    Tipo = "Validación",
+                    Titulo = v.Resultado ?? "Validación",
+                    Fecha = v.Fecha ?? DateTime.MinValue,
+                    Detalle = v.Validador
+                })
+                .ToListAsync();
+
+            var eventosCronograma = await _context.Cronogramas
+                .AsNoTracking()
+                .Where(c => c.IdProyecto == id && c.FechaInicio != null)
+                .OrderByDescending(c => c.FechaInicio)
+                .Take(4)
+                .Select(c => new HubEventoItem
+                {
+                    Tipo = "Cronograma",
+                    Titulo = c.NombreFase,
+                    Fecha = c.FechaInicio ?? DateTime.MinValue,
+                    Detalle = c.Estado
+                })
+                .ToListAsync();
+
+            eventos.AddRange(eventosResultados);
+            eventos.AddRange(eventosPublicaciones);
+            eventos.AddRange(eventosValidaciones);
+            eventos.AddRange(eventosCronograma);
+
+            var vm = new ProyectoHubViewModel
+            {
+                Proyecto = proyecto,
+                NivelAcceso = NivelComoTexto(nivel),
+                TotalExperimentos = totalExperimentos,
+                TotalMuestras = totalMuestras,
+                TotalResultados = totalResultados,
+                TotalAnalisis = totalAnalisis,
+                TotalValidaciones = totalValidaciones,
+                TotalPublicaciones = totalPublicaciones,
+                TotalRepositorios = totalRepositorios,
+                TotalColaboradores = totalColaboradores,
+                TotalCronograma = totalCronograma,
+                HitosPendientes = hitosPendientes,
+                HitosCompletados = hitosCompletados,
+                ProximosHitos = proximosHitos,
+                EventosRecientes = eventos.OrderByDescending(e => e.Fecha).Take(12).ToList()
+            };
+
+            return View(vm);
         }
 
         [Authorize(Roles = Roles.Administrador)]
@@ -55,9 +277,11 @@ namespace ResearchHub.Controllers
         [Authorize(Roles = Roles.Administrador)]
         public async Task<IActionResult> Create(Proyecto proyecto)
         {
+            ValidarSublinea(proyecto);
+
             if (!ModelState.IsValid)
             {
-                await CargarCombosAsync();
+                await CargarCombosAsync(proyecto.IdLinea, proyecto.IdSublinea);
                 return View(proyecto);
             }
 
@@ -68,28 +292,42 @@ namespace ResearchHub.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        [Authorize(Roles = Roles.Administrador)]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
 
+            var isAdmin = User.IsInRole(Roles.Administrador);
+            var nivel = await ObtenerNivelAccesoAsync(id.Value, User.Identity?.Name, isAdmin);
+            if (!(isAdmin || nivel >= NivelAcceso.Write))
+            {
+                return Forbid();
+            }
+
             var proyecto = await _context.Proyectos.FindAsync(id.Value);
             if (proyecto == null) return NotFound();
 
-            await CargarCombosAsync();
+            await CargarCombosAsync(proyecto.IdLinea, proyecto.IdSublinea);
             return View(proyecto);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Roles = Roles.Administrador)]
         public async Task<IActionResult> Edit(int id, Proyecto proyecto)
         {
             if (id != proyecto.IdProyecto) return NotFound();
 
+            var isAdmin = User.IsInRole(Roles.Administrador);
+            var nivel = await ObtenerNivelAccesoAsync(id, User.Identity?.Name, isAdmin);
+            if (!(isAdmin || nivel >= NivelAcceso.Write))
+            {
+                return Forbid();
+            }
+
+            ValidarSublinea(proyecto);
+
             if (!ModelState.IsValid)
             {
-                await CargarCombosAsync();
+                await CargarCombosAsync(proyecto.IdLinea, proyecto.IdSublinea);
                 return View(proyecto);
             }
 
@@ -137,22 +375,154 @@ namespace ResearchHub.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task CargarCombosAsync()
+        private async Task<Dictionary<int, string>> ConstruirPermisosAsync(IEnumerable<Proyecto> proyectos, string? userEmail, bool isAdmin)
+        {
+            var salida = new Dictionary<int, string>();
+
+            foreach (var proyecto in proyectos)
+            {
+                var nivel = await ObtenerNivelAccesoAsync(proyecto.IdProyecto, userEmail, isAdmin);
+                salida[proyecto.IdProyecto] = NivelComoTexto(nivel);
+            }
+
+            return salida;
+        }
+
+        private async Task<NivelAcceso> ObtenerNivelAccesoAsync(int idProyecto, string? userEmail, bool isAdmin)
+        {
+            if (isAdmin)
+            {
+                return NivelAcceso.Admin;
+            }
+
+            if (string.IsNullOrWhiteSpace(userEmail))
+            {
+                return NivelAcceso.Ninguno;
+            }
+
+            var info = await _context.Proyectos
+                .AsNoTracking()
+                .Where(p => p.IdProyecto == idProyecto)
+                .Select(p => new
+                {
+                    PrincipalEmail = p.InvestigadorPrincipal != null ? p.InvestigadorPrincipal.Email : null,
+                    RolColaborador = p.Colaboradores
+                        .Where(c => c.Email == userEmail)
+                        .Select(c => c.Rol)
+                        .FirstOrDefault(),
+                    EsColaborador = p.Colaboradores.Any(c => c.Email == userEmail)
+                })
+                .FirstOrDefaultAsync();
+
+            if (info == null)
+            {
+                return NivelAcceso.Ninguno;
+            }
+
+            if (!string.IsNullOrWhiteSpace(info.PrincipalEmail) &&
+                string.Equals(info.PrincipalEmail, userEmail, StringComparison.OrdinalIgnoreCase))
+            {
+                return NivelAcceso.Admin;
+            }
+
+            if (info.EsColaborador)
+            {
+                return ParsearRolColaborador(info.RolColaborador);
+            }
+
+            return NivelAcceso.Ninguno;
+        }
+
+        private static NivelAcceso ParsearRolColaborador(string? rol)
+        {
+            if (string.IsNullOrWhiteSpace(rol))
+            {
+                return NivelAcceso.Read;
+            }
+
+            var valor = rol.Trim().ToLowerInvariant();
+            if (valor.Contains("admin")) return NivelAcceso.Admin;
+            if (valor.Contains("write") || valor.Contains("editor") || valor.Contains("edicion") || valor.Contains("editar")) return NivelAcceso.Write;
+            if (valor.Contains("read") || valor.Contains("lectura") || valor.Contains("lector") || valor.Contains("ver")) return NivelAcceso.Read;
+
+            return NivelAcceso.Read;
+        }
+
+        private static string NivelComoTexto(NivelAcceso nivel)
+        {
+            return nivel switch
+            {
+                NivelAcceso.Admin => "Admin",
+                NivelAcceso.Write => "Write",
+                NivelAcceso.Read => "Read",
+                _ => "Ninguno"
+            };
+        }
+
+        private void ValidarSublinea(Proyecto proyecto)
+        {
+            if (!proyecto.IdSublinea.HasValue)
+            {
+                return;
+            }
+
+            var esValida = _context.SublineasInvestigacion.Any(s =>
+                s.IdSublinea == proyecto.IdSublinea.Value &&
+                s.IdLinea == proyecto.IdLinea &&
+                s.Activa);
+
+            if (!esValida)
+            {
+                ModelState.AddModelError(nameof(Proyecto.IdSublinea), "La sublínea seleccionada no pertenece a la línea de investigación elegida.");
+            }
+        }
+
+        private async Task CargarCombosAsync(int? idLinea = null, int? idSublinea = null)
         {
             ViewData["Investigadores"] = new SelectList(
-                await _context.Investigadores.AsNoTracking().ToListAsync(),
+                await _context.Investigadores
+                    .AsNoTracking()
+                    .OrderBy(i => i.Apellido)
+                    .ThenBy(i => i.Nombre)
+                    .Select(i => new { i.IdInvestigador, Nombre = i.Nombre + " " + i.Apellido })
+                    .ToListAsync(),
                 "IdInvestigador",
                 "Nombre");
 
             ViewData["Instituciones"] = new SelectList(
-                await _context.Instituciones.AsNoTracking().ToListAsync(),
+                await _context.Instituciones.AsNoTracking().OrderBy(i => i.Nombre).ToListAsync(),
                 "IdInstitucion",
                 "Nombre");
 
             ViewData["Lineas"] = new SelectList(
-                await _context.LineasInvestigacion.AsNoTracking().ToListAsync(),
+                await _context.LineasInvestigacion.AsNoTracking().OrderBy(l => l.Nombre).ToListAsync(),
                 "IdLinea",
-                "Nombre");
+                "Nombre",
+                idLinea);
+
+            var sublineas = _context.SublineasInvestigacion
+                .AsNoTracking()
+                .Where(s => s.Activa)
+                .Include(s => s.LineaInvestigacion)
+                .AsQueryable();
+
+            if (idLinea.HasValue)
+            {
+                sublineas = sublineas.Where(s => s.IdLinea == idLinea.Value);
+            }
+
+            ViewData["Sublineas"] = new SelectList(
+                await sublineas
+                    .OrderBy(s => s.Nombre)
+                    .Select(s => new
+                    {
+                        s.IdSublinea,
+                        Nombre = s.LineaInvestigacion != null ? s.LineaInvestigacion.Nombre + " / " + s.Nombre : s.Nombre
+                    })
+                    .ToListAsync(),
+                "IdSublinea",
+                "Nombre",
+                idSublinea);
         }
 
         private async Task<bool> ProyectoExisteAsync(int id)
@@ -161,3 +531,5 @@ namespace ResearchHub.Controllers
         }
     }
 }
+
+

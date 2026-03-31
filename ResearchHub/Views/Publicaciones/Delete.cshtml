@@ -1,0 +1,34 @@
+﻿@model ResearchHub.Models.Publicacion
+@{
+    ViewData["Title"] = "Eliminar publicacion";
+}
+
+<div class="rh-delete-wrap">
+    <h1 class="rh-delete-title">Eliminar publicacion</h1>
+    <p class="rh-warning">Esta accion no se puede deshacer.</p>
+
+    <div class="rh-card">
+        <div class="rh-field">
+            <span class="rh-field-label">Titulo</span>
+            <span class="rh-field-value">@Model.Titulo</span>
+        </div>
+        <div class="rh-field">
+            <span class="rh-field-label">Proyecto</span>
+            <span class="rh-field-value">@Model.Proyecto?.Titulo</span>
+        </div>
+        <div class="rh-field">
+            <span class="rh-field-label">DOI</span>
+            <span class="rh-field-value">@Model.DOI</span>
+        </div>
+
+        <form asp-action="Delete" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="IdPublicacion" />
+            <div class="rh-actions">
+                <button class="rh-btn rh-btn-danger" type="submit">Eliminar</button>
+                <a class="rh-btn rh-btn-secondary" asp-action="Index">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+

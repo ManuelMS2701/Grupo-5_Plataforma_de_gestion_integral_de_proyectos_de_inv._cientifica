@@ -1,0 +1,66 @@
+﻿@model ResearchHub.Models.Cronograma
+@{
+    ViewData["Title"] = "Detalle de fase";
+}
+
+<div class="rh-details-wrap">
+    <h1 class="rh-details-title">Detalle de fase del cronograma</h1>
+
+    <div class="rh-card">
+        <div class="rh-grid">
+            <div class="rh-field rh-grid-full">
+                <span class="rh-field-label">Fase</span>
+                <span class="rh-field-value">@Model.NombreFase</span>
+            </div>
+            <div class="rh-field">
+                <span class="rh-field-label">Inicio</span>
+                <span class="rh-field-value">@(Model.FechaInicio?.ToString("yyyy-MM-dd") ?? "-")</span>
+            </div>
+            <div class="rh-field">
+                <span class="rh-field-label">Fin</span>
+                <span class="rh-field-value">@(Model.FechaFin?.ToString("yyyy-MM-dd") ?? "-")</span>
+            </div>
+            <div class="rh-field">
+                <span class="rh-field-label">Estado</span>
+                <span class="rh-field-value">@Model.Estado</span>
+            </div>
+            <div class="rh-field">
+                <span class="rh-field-label">Avance</span>
+                <span class="rh-field-value">@Model.PorcentajeAvance%</span>
+            </div>
+            <div class="rh-field">
+                <span class="rh-field-label">Hito</span>
+                <span class="rh-field-value">@(Model.EsHito ? "Sí" : "No")</span>
+            </div>
+            <div class="rh-field">
+                <span class="rh-field-label">Responsable</span>
+                <span class="rh-field-value">@Model.Responsable</span>
+            </div>
+            <div class="rh-field">
+                <span class="rh-field-label">Prioridad</span>
+                <span class="rh-field-value">@Model.Prioridad</span>
+            </div>
+            <div class="rh-field">
+                <span class="rh-field-label">Riesgo</span>
+                <span class="rh-field-value">@Model.Riesgo</span>
+            </div>
+            <div class="rh-field">
+                <span class="rh-field-label">Depende de</span>
+                <span class="rh-field-value">@Model.Dependencia?.NombreFase</span>
+            </div>
+            <div class="rh-field">
+                <span class="rh-field-label">Proyecto</span>
+                <span class="rh-field-value">@Model.Proyecto?.Titulo</span>
+            </div>
+            <div class="rh-field rh-grid-full">
+                <span class="rh-field-label">Descripcion</span>
+                <span class="rh-field-value">@Model.Descripcion</span>
+            </div>
+        </div>
+
+        <div class="rh-actions">
+            <a class="rh-btn" asp-action="Edit" asp-route-id="@Model.IdCronograma">Editar</a>
+            <a class="rh-btn rh-btn-secondary" asp-action="Index">Volver</a>
+        </div>
+    </div>
+</div>

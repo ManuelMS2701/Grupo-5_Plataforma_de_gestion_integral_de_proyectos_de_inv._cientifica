@@ -1,109 +1,78 @@
 ﻿@model IEnumerable<ResearchHub.Models.Proyecto>
+@using System.Collections.Generic
 
 @{
     ViewData["Title"] = "Proyectos";
+    var search = ViewData["Search"]?.ToString();
+    var estadoSeleccionado = ViewData["Estado"]?.ToString();
+    var estados = ViewData["Estados"] as IEnumerable<string> ?? new string[0];
+    var isAdmin = User?.IsInRole(ResearchHub.Models.Roles.Administrador) == true;
+    var misProyectos = (bool?)ViewData["MisProyectos"] == true;
+    var puedeCrear = (bool?)ViewData["PuedeCrearProyecto"] == true;
+    var permisos = ViewData["PermisosProyecto"] as IDictionary<int, string> ?? new Dictionary<int, string>();
 }
 
 <style>
-    .rh-list-wrap {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 40px 20px 70px;
-        font-family: "Space Grotesk", system-ui, sans-serif;
-    }
-
-    .rh-list-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        margin-bottom: 18px;
-    }
-
-    .rh-list-title {
-        font-family: "Fraunces", serif;
-        font-size: clamp(1.7rem, 3vw, 2.4rem);
-        margin: 0;
-    }
-
-    .rh-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        background: #5b8df6;
-        color: #fff;
-        padding: 10px 14px;
-        border-radius: 10px;
-        text-decoration: none;
-        font-weight: 600;
-        box-shadow: 0 10px 24px rgba(91, 141, 246, 0.2);
-    }
-
+    .rh-list-wrap { max-width: 1100px; margin: 0 auto; padding: 40px 20px 70px; font-family: "Space Grotesk", system-ui, sans-serif; }
+    .rh-list-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 18px; flex-wrap: wrap; }
+    .rh-list-title { font-family: "Fraunces", serif; font-size: clamp(1.7rem, 3vw, 2.4rem); margin: 0; }
+    .rh-btn { display: inline-flex; align-items: center; gap: 8px; background: #5b8df6; color: #fff; padding: 10px 14px; border-radius: 10px; text-decoration: none; font-weight: 600; box-shadow: 0 10px 24px rgba(91,141,246,.2); }
     .rh-btn:hover { color: #fff; }
-
-    .rh-table {
-        background: #fff;
-        border: 1px solid rgba(15,23,42,0.08);
-        border-radius: 14px;
-        overflow: hidden;
-        box-shadow: 0 12px 24px rgba(15,23,42,0.06);
-    }
-
-    .rh-table table {
-        width: 100%;
-        margin: 0;
-    }
-
-    .rh-table thead {
-        background: #f7f9fc;
-        color: #475569;
-        font-size: 0.9rem;
-    }
-
-    .rh-table th, .rh-table td {
-        padding: 14px 16px;
-        vertical-align: middle;
-    }
-
-    .rh-pill {
-        display: inline-flex;
-        align-items: center;
-        padding: 4px 10px;
-        border-radius: 999px;
-        background: #eef3ff;
-        color: #2b5bb5;
-        font-weight: 600;
-        font-size: 0.82rem;
-        border: 1px solid rgba(43, 91, 181, 0.12);
-    }
-
-    .rh-actions a {
-        margin-right: 8px;
-        text-decoration: none;
-        font-weight: 600;
-        color: #1d4ed8;
-    }
-
-    .rh-actions a:hover { text-decoration: underline; }
-
-    @@media (max-width: 900px) {
-        .rh-list-header {
-            flex-direction: column;
-            align-items: flex-start;
-        }
-        .rh-table th:nth-child(3),
-        .rh-table td:nth-child(3),
-        .rh-table th:nth-child(4),
-        .rh-table td:nth-child(4) {
-            display: none;
-        }
-    }
+    .rh-filters { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+    .rh-input, .rh-select { border: 1px solid rgba(15,23,42,.12); border-radius: 10px; padding: 9px 11px; min-width: 170px; background: #fff; }
+    .rh-check { display: inline-flex; align-items: center; gap: 6px; font-size: 0.9rem; color: #334155; }
+    .rh-filter-btn { border: 1px solid rgba(37,99,235,.2); color: #1d4ed8; background: #eff6ff; border-radius: 10px; padding: 9px 12px; font-weight: 600; text-decoration: none; }
+    .rh-count { color: #64748b; font-size: 0.9rem; margin-top: 6px; }
+    .rh-table { background: #fff; border: 1px solid rgba(15,23,42,.08); border-radius: 14px; overflow: hidden; box-shadow: 0 12px 24px rgba(15,23,42,.06); }
+    .rh-table table { width: 100%; margin: 0; }
+    .rh-table thead { background: #f7f9fc; color: #475569; font-size: 0.9rem; }
+    .rh-table th, .rh-table td { padding: 14px 16px; vertical-align: middle; }
+    .rh-pill { display: inline-flex; align-items: center; padding: 4px 10px; border-radius: 999px; background: #eef3ff; color: #2b5bb5; font-weight: 600; font-size: 0.82rem; border: 1px solid rgba(43,91,181,.12); }
+    .rh-actions a { margin-right: 8px; text-decoration: none; font-weight: 600; color: #1d4ed8; }
 </style>
 
 <div class="rh-list-wrap">
     <div class="rh-list-header">
-        <h1 class="rh-list-title">Proyectos</h1>
-        <a class="rh-btn" asp-controller="Proyectos" asp-action="Create">Nuevo proyecto</a>
+        <div>
+            <h1 class="rh-list-title">Proyectos</h1>
+            <form class="rh-filters" method="get" asp-controller="Proyectos" asp-action="Index">
+                <input class="rh-input" type="text" name="search" value="@search" placeholder="Buscar por título, institución o sublínea" />
+                <select class="rh-select" name="estado">
+                    <option value="">Todos los estados</option>
+                    @foreach (var estado in estados)
+                    {
+                        if (estado == estadoSeleccionado)
+                        {
+                            <option value="@estado" selected>@estado</option>
+                        }
+                        else
+                        {
+                            <option value="@estado">@estado</option>
+                        }
+                    }
+                </select>
+
+                @if (isAdmin)
+                {
+                    <label class="rh-check">
+                        <input type="checkbox" name="misProyectos" value="true" checked="@misProyectos" />
+                        Solo mis proyectos
+                    </label>
+                }
+                else
+                {
+                    <input type="hidden" name="misProyectos" value="true" />
+                }
+
+                <button class="rh-filter-btn" type="submit">Filtrar</button>
+                <a class="rh-filter-btn" asp-controller="Proyectos" asp-action="Index" asp-route-misProyectos="@misProyectos">Limpiar</a>
+            </form>
+            <p class="rh-count">@Model.Count() proyectos encontrados</p>
+        </div>
+        @if (puedeCrear)
+        {
+            <a class="rh-btn" asp-controller="Proyectos" asp-action="Create">Nuevo proyecto</a>
+        }
     </div>
 
     <div class="rh-table">
@@ -112,27 +81,35 @@
                 <tr>
                     <th>Título</th>
                     <th>Estado</th>
-                    <th>Inicio</th>
-                    <th>Fin</th>
+                    <th>Línea/Sublinea</th>
                     <th>Institución</th>
+                    <th>Acceso</th>
                     <th></th>
                 </tr>
             </thead>
             <tbody>
             @foreach (var item in Model)
             {
+                var permiso = permisos.ContainsKey(item.IdProyecto) ? permisos[item.IdProyecto] : "Ninguno";
+                var puedeEditar = permiso == "Admin" || permiso == "Write" || isAdmin;
+
                 <tr>
                     <td>@item.Titulo</td>
-                    <td>
-                        <span class="rh-pill">@item.Estado</span>
-                    </td>
-                    <td>@item.FechaInicio?.ToString("yyyy-MM-dd")</td>
-                    <td>@item.FechaFin?.ToString("yyyy-MM-dd")</td>
+                    <td><span class="rh-pill">@item.Estado</span></td>
+                    <td>@item.LineaInvestigacion?.Nombre / @item.SublineaInvestigacion?.Nombre</td>
                     <td>@item.Institucion?.Nombre</td>
+                    <td><span class="rh-pill">@permiso</span></td>
                     <td class="rh-actions">
-                        <a asp-action="Edit" asp-route-id="@item.IdProyecto">Editar</a>
+                        @if (puedeEditar)
+                        {
+                            <a asp-action="Edit" asp-route-id="@item.IdProyecto">Editar</a>
+                        }
                         <a asp-action="Details" asp-route-id="@item.IdProyecto">Detalles</a>
-                        <a asp-action="Delete" asp-route-id="@item.IdProyecto">Eliminar</a>
+                        <a asp-action="Hub" asp-route-id="@item.IdProyecto">Hub</a>
+                        @if (isAdmin)
+                        {
+                            <a asp-action="Delete" asp-route-id="@item.IdProyecto">Eliminar</a>
+                        }
                     </td>
                 </tr>
             }

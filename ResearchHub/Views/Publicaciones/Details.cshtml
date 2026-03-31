@@ -1,0 +1,43 @@
+﻿@model ResearchHub.Models.Publicacion
+@{
+    ViewData["Title"] = "Detalle de publicacion";
+}
+
+<div class="rh-details-wrap">
+    <h1 class="rh-details-title">Detalle de publicacion</h1>
+
+    <div class="rh-card">
+        <div class="rh-grid">
+            <div class="rh-field rh-grid-full">
+                <span class="rh-field-label">Titulo</span>
+                <span class="rh-field-value">@Model.Titulo</span>
+            </div>
+            <div class="rh-field">
+                <span class="rh-field-label">Revista</span>
+                <span class="rh-field-value">@Model.Revista</span>
+            </div>
+            <div class="rh-field">
+                <span class="rh-field-label">DOI</span>
+                <span class="rh-field-value">@Model.DOI</span>
+            </div>
+            <div class="rh-field">
+                <span class="rh-field-label">Fecha</span>
+                <span class="rh-field-value">@(Model.FechaPublicacion?.ToString("yyyy-MM-dd") ?? "-")</span>
+            </div>
+            <div class="rh-field">
+                <span class="rh-field-label">Proyecto</span>
+                <span class="rh-field-value">@Model.Proyecto?.Titulo</span>
+            </div>
+            <div class="rh-field rh-grid-full">
+                <span class="rh-field-label">Resumen</span>
+                <span class="rh-field-value">@Model.Resumen</span>
+            </div>
+        </div>
+
+        <div class="rh-actions">
+            <a class="rh-btn" asp-action="Edit" asp-route-id="@Model.IdPublicacion">Editar</a>
+            <a class="rh-btn rh-btn-secondary" asp-action="Index">Volver</a>
+        </div>
+    </div>
+</div>
+

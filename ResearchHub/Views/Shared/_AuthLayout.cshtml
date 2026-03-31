@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ResearchHub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(900px 420px at 0% -10%, #dbeafe 0%, transparent 65%), #f8fafc;
+            font-family: "Space Grotesk", system-ui, sans-serif;
+            color: #0f172a;
+            padding: 24px 12px;
+        }
+
+        .rh-auth-wrap {
+            width: 100%;
+            max-width: 540px;
+            margin: 0 auto;
+        }
+
+        .rh-auth-title {
+            font-family: "Fraunces", serif;
+            font-size: 2rem;
+            margin-bottom: 6px;
+        }
+
+        .rh-auth-sub {
+            color: #64748b;
+            margin-bottom: 20px;
+        }
+
+        .rh-card {
+            background: #ffffff;
+            border: 1px solid rgba(15, 23, 42, 0.08);
+            border-radius: 16px;
+            padding: 22px;
+            box-shadow: 0 12px 24px rgba(15, 23, 42, 0.06);
+        }
+
+        .rh-label {
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .rh-input {
+            border-radius: 10px;
+            border: 1px solid rgba(15, 23, 42, 0.12);
+            padding: 10px 12px;
+        }
+
+        .rh-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 18px;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+        }
+
+        .rh-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #5b8df6;
+            color: #fff;
+            padding: 10px 14px;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            border: none;
+            box-shadow: 0 10px 24px rgba(91, 141, 246, 0.2);
+        }
+
+        .rh-link {
+            color: #1d4ed8;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .rh-link:hover {
+            text-decoration: underline;
+        }
+
+        .rh-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #1e293b;
+            font-weight: 700;
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+    @RenderBody()
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

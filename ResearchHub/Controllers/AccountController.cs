@@ -39,11 +39,17 @@ namespace ResearchHub.Controllers
                 model.Email,
                 model.Password,
                 model.RememberMe,
-                lockoutOnFailure: false);
+                lockoutOnFailure: true);
 
             if (result.Succeeded)
             {
                 return RedirectToLocal(returnUrl);
+            }
+
+            if (result.IsLockedOut)
+            {
+                ModelState.AddModelError(string.Empty, "Cuenta bloqueada por exceso de intentos. Intenta nuevamente en 15 minutos.");
+                return View(model);
             }
 
             ModelState.AddModelError(string.Empty, "Credenciales inválidas.");

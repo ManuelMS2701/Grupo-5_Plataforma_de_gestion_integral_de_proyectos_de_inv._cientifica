@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace ResearchHub.Models
 {
@@ -15,6 +16,7 @@ namespace ResearchHub.Models
 
         public bool Activa { get; set; }
 
+        public ICollection<SublineaInvestigacion> Sublineas { get; set; } = new List<SublineaInvestigacion>();
         public ICollection<Proyecto> Proyectos { get; set; } = new List<Proyecto>();
     }
 }

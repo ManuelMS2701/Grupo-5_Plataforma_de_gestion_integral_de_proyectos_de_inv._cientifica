@@ -1,0 +1,38 @@
+﻿@model ResearchHub.Models.Validacion
+@{
+    ViewData["Title"] = "Detalle de validacion";
+}
+
+<div class="rh-details-wrap">
+    <h1 class="rh-details-title">Detalle de validacion</h1>
+
+    <div class="rh-card">
+        <div class="rh-grid">
+            <div class="rh-field">
+                <span class="rh-field-label">Fecha</span>
+                <span class="rh-field-value">@(Model.Fecha?.ToString("yyyy-MM-dd") ?? "-")</span>
+            </div>
+            <div class="rh-field">
+                <span class="rh-field-label">Resultado</span>
+                <span class="rh-field-value">@Model.Resultado</span>
+            </div>
+            <div class="rh-field">
+                <span class="rh-field-label">Validador</span>
+                <span class="rh-field-value">@Model.Validador</span>
+            </div>
+            <div class="rh-field">
+                <span class="rh-field-label">Analisis</span>
+                <span class="rh-field-value">@Model.IdAnalisis</span>
+            </div>
+            <div class="rh-field rh-grid-full">
+                <span class="rh-field-label">Observaciones</span>
+                <span class="rh-field-value">@Model.Observaciones</span>
+            </div>
+        </div>
+
+        <div class="rh-actions">
+            <a class="rh-btn" asp-action="Edit" asp-route-id="@Model.IdValidacion">Editar</a>
+            <a class="rh-btn rh-btn-secondary" asp-action="Index">Volver</a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,39 @@
+﻿@model IEnumerable<ResearchHub.Models.SublineaInvestigacion>
+@{
+    ViewData["Title"] = "Sublíneas de investigación";
+}
+
+<div class="rh-list-wrap">
+    <div class="rh-list-header">
+        <h1 class="rh-list-title">Sublíneas de investigación</h1>
+        <a class="rh-btn" asp-action="Create">Nueva sublínea</a>
+    </div>
+
+    <div class="rh-table">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Línea</th>
+                    <th>Nombre</th>
+                    <th>Activa</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.LineaInvestigacion?.Nombre</td>
+                    <td>@item.Nombre</td>
+                    <td><span class="rh-pill">@(item.Activa ? "Sí" : "No")</span></td>
+                    <td class="rh-row-actions">
+                        <a asp-action="Edit" asp-route-id="@item.IdSublinea">Editar</a>
+                        <a asp-action="Details" asp-route-id="@item.IdSublinea">Detalles</a>
+                        <a asp-action="Delete" asp-route-id="@item.IdSublinea">Eliminar</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

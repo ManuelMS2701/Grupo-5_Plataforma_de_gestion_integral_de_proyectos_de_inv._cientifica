@@ -1,0 +1,85 @@
+﻿@model ResearchHub.Models.PagedListViewModel<ResearchHub.Models.Publicacion>
+@{
+    ViewData["Title"] = "Publicaciones";
+    var hasPrev = Model.Page > 1;
+    var hasNext = Model.Page < Model.TotalPages;
+}
+
+<div class="rh-list-wrap">
+    <div class="rh-list-header">
+        <h1 class="rh-list-title">Publicaciones</h1>
+        <a class="rh-btn" asp-action="Create">Nueva publicacion</a>
+    </div>
+
+    <form method="get" class="rh-toolbar">
+        <input class="form-control" type="text" name="q" value="@Model.Query" placeholder="Buscar por titulo, revista, DOI o proyecto" />
+        <select class="form-select" name="sort">
+            <option value="fecha_desc" selected="@(Model.Sort == "fecha_desc")">Fecha desc</option>
+            <option value="fecha_asc" selected="@(Model.Sort == "fecha_asc")">Fecha asc</option>
+            <option value="titulo_asc" selected="@(Model.Sort == "titulo_asc")">Titulo A-Z</option>
+            <option value="titulo_desc" selected="@(Model.Sort == "titulo_desc")">Titulo Z-A</option>
+        </select>
+        <select class="form-select" name="pageSize">
+            <option value="10" selected="@(Model.PageSize == 10)">10 / pagina</option>
+            <option value="20" selected="@(Model.PageSize == 20)">20 / pagina</option>
+            <option value="50" selected="@(Model.PageSize == 50)">50 / pagina</option>
+        </select>
+        <button class="rh-btn" type="submit">Filtrar</button>
+        <a class="rh-btn rh-btn-secondary" asp-action="ExportCsv" asp-route-q="@Model.Query" asp-route-sort="@Model.Sort">Exportar CSV</a>
+    </form>
+
+    <div class="rh-meta">Mostrando @Model.FromItem-@Model.ToItem de @Model.TotalItems registros</div>
+
+    <div class="rh-table">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Titulo</th>
+                    <th>Revista</th>
+                    <th>Fecha</th>
+                    <th>DOI</th>
+                    <th>Proyecto</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @if (!Model.Items.Any())
+            {
+                <tr><td colspan="6" class="rh-empty">No hay resultados para este filtro.</td></tr>
+            }
+            else
+            {
+                @foreach (var item in Model.Items)
+                {
+                    <tr>
+                        <td>@item.Titulo</td>
+                        <td>@item.Revista</td>
+                        <td><span class="rh-pill">@(item.FechaPublicacion?.ToString("yyyy-MM-dd") ?? "-")</span></td>
+                        <td>@item.DOI</td>
+                        <td>@item.Proyecto?.Titulo</td>
+                        <td class="rh-row-actions">
+                            <a asp-action="Edit" asp-route-id="@item.IdPublicacion">Editar</a>
+                            <a asp-action="Details" asp-route-id="@item.IdPublicacion">Detalles</a>
+                            <a asp-action="Delete" asp-route-id="@item.IdPublicacion">Eliminar</a>
+                        </td>
+                    </tr>
+                }
+            }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="rh-pager">
+        <div>Pagina @Model.Page de @Model.TotalPages</div>
+        <div class="rh-page-links">
+            @if (hasPrev)
+            {
+                <a class="rh-page-link" asp-action="Index" asp-route-q="@Model.Query" asp-route-sort="@Model.Sort" asp-route-pageSize="@Model.PageSize" asp-route-page="@(Model.Page - 1)">Anterior</a>
+            }
+            @if (hasNext)
+            {
+                <a class="rh-page-link" asp-action="Index" asp-route-q="@Model.Query" asp-route-sort="@Model.Sort" asp-route-pageSize="@Model.PageSize" asp-route-page="@(Model.Page + 1)">Siguiente</a>
+            }
+        </div>
+    </div>
+</div>

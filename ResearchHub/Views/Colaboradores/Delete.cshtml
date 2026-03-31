@@ -1,0 +1,30 @@
+﻿@model ResearchHub.Models.Colaborador
+@{
+    ViewData["Title"] = "Eliminar colaborador";
+}
+
+<div class="rh-delete-wrap">
+    <h1 class="rh-delete-title">Eliminar colaborador</h1>
+    <p class="rh-warning">Esta accion no se puede deshacer.</p>
+
+    <div class="rh-card">
+        <div class="rh-field">
+            <span class="rh-field-label">Nombre</span>
+            <span class="rh-field-value">@Model.Nombre @Model.Apellido</span>
+        </div>
+        <div class="rh-field">
+            <span class="rh-field-label">Proyecto</span>
+            <span class="rh-field-value">@Model.Proyecto?.Titulo</span>
+        </div>
+
+        <form asp-action="Delete" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="IdColaborador" />
+            <div class="rh-actions">
+                <button class="rh-btn rh-btn-danger" type="submit">Eliminar</button>
+                <a class="rh-btn rh-btn-secondary" asp-action="Index">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+

@@ -1,0 +1,108 @@
+@model ResearchHub.Models.Experimento
+
+@{
+    ViewData["Title"] = "Eliminar experimento";
+}
+
+<style>
+    .rh-delete-wrap {
+        max-width: 920px;
+        margin: 0 auto;
+        padding: 40px 20px 70px;
+        font-family: "Space Grotesk", system-ui, sans-serif;
+    }
+
+    .rh-delete-title {
+        font-family: "Fraunces", serif;
+        font-size: clamp(1.7rem, 3vw, 2.4rem);
+        margin: 0 0 8px;
+    }
+
+    .rh-warning {
+        color: #b91c1c;
+        margin-bottom: 16px;
+    }
+
+    .rh-card {
+        background: #ffffff;
+        border: 1px solid rgba(15,23,42,0.08);
+        border-radius: 16px;
+        padding: 22px;
+        box-shadow: 0 12px 24px rgba(15,23,42,0.06);
+    }
+
+    .rh-field {
+        background: #f8fafc;
+        border: 1px solid rgba(15,23,42,0.08);
+        border-radius: 12px;
+        padding: 12px 14px;
+        margin-bottom: 10px;
+    }
+
+    .rh-label {
+        font-size: 0.85rem;
+        color: #64748b;
+        margin-bottom: 6px;
+        display: block;
+    }
+
+    .rh-value {
+        font-weight: 600;
+        color: #0f172a;
+    }
+
+    .rh-actions {
+        display: flex;
+        gap: 12px;
+        margin-top: 18px;
+    }
+
+    .rh-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #ef4444;
+        color: #fff;
+        padding: 10px 14px;
+        border-radius: 10px;
+        text-decoration: none;
+        font-weight: 600;
+        border: none;
+        box-shadow: 0 10px 24px rgba(239, 68, 68, 0.2);
+    }
+
+    .rh-btn-secondary {
+        background: #e2e8f0;
+        color: #0f172a;
+        box-shadow: none;
+    }
+</style>
+
+<div class="rh-delete-wrap">
+    <h1 class="rh-delete-title">Eliminar experimento</h1>
+    <p class="rh-warning">Esta accion no se puede deshacer.</p>
+
+    <div class="rh-card">
+        <div class="rh-field">
+            <span class="rh-label">Titulo</span>
+            <span class="rh-value">@Model.Titulo</span>
+        </div>
+        <div class="rh-field">
+            <span class="rh-label">Proyecto</span>
+            <span class="rh-value">@Model.Proyecto?.Titulo</span>
+        </div>
+        <div class="rh-field">
+            <span class="rh-label">Protocolo</span>
+            <span class="rh-value">@Model.Protocolo?.Nombre</span>
+        </div>
+
+        <form asp-action="Delete" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="IdExperimento" />
+            <div class="rh-actions">
+                <button class="rh-btn" type="submit">Eliminar</button>
+                <a class="rh-btn rh-btn-secondary" asp-action="Index">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>

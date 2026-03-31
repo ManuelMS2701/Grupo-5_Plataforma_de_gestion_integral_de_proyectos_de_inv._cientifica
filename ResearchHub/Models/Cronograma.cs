@@ -21,9 +21,28 @@ namespace ResearchHub.Models
         [MaxLength(50)]
         public string? Estado { get; set; }
 
+        [Range(0, 100)]
+        public int PorcentajeAvance { get; set; }
+
+        public bool EsHito { get; set; }
+
+        [MaxLength(150)]
+        public string? Responsable { get; set; }
+
+        [MaxLength(50)]
+        public string? Prioridad { get; set; }
+
+        [MaxLength(50)]
+        public string? Riesgo { get; set; }
+
+        [ForeignKey(nameof(Dependencia))]
+        public int? IdDependencia { get; set; }
+
         [ForeignKey(nameof(Proyecto))]
         public int IdProyecto { get; set; }
 
+        public Cronograma? Dependencia { get; set; }
+        public ICollection<Cronograma> Dependientes { get; set; } = new List<Cronograma>();
         public Proyecto? Proyecto { get; set; }
     }
 }

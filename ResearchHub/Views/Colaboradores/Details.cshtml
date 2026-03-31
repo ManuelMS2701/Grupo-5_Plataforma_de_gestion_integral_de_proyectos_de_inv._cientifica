@@ -1,0 +1,39 @@
+﻿@model ResearchHub.Models.Colaborador
+@{
+    ViewData["Title"] = "Detalle de colaborador";
+}
+
+<div class="rh-details-wrap">
+    <h1 class="rh-details-title">Detalle de colaborador</h1>
+
+    <div class="rh-card">
+        <div class="rh-grid">
+            <div class="rh-field">
+                <span class="rh-field-label">Nombre</span>
+                <span class="rh-field-value">@Model.Nombre @Model.Apellido</span>
+            </div>
+            <div class="rh-field">
+                <span class="rh-field-label">Email</span>
+                <span class="rh-field-value">@Model.Email</span>
+            </div>
+            <div class="rh-field">
+                <span class="rh-field-label">Tipo</span>
+                <span class="rh-field-value">@Model.Tipo</span>
+            </div>
+            <div class="rh-field">
+                <span class="rh-field-label">Rol</span>
+                <span class="rh-field-value">@Model.Rol</span>
+            </div>
+            <div class="rh-field rh-grid-full">
+                <span class="rh-field-label">Proyecto</span>
+                <span class="rh-field-value">@Model.Proyecto?.Titulo</span>
+            </div>
+        </div>
+
+        <div class="rh-actions">
+            <a class="rh-btn" asp-action="Edit" asp-route-id="@Model.IdColaborador">Editar</a>
+            <a class="rh-btn rh-btn-secondary" asp-action="Index">Volver</a>
+        </div>
+    </div>
+</div>
+

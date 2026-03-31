@@ -1,0 +1,55 @@
+﻿@model ResearchHub.Models.Colaborador
+@using Microsoft.AspNetCore.Mvc.Rendering
+@{
+    ViewData["Title"] = "Crear colaborador";
+}
+
+<div class="rh-form-wrap">
+    <h1 class="rh-form-title">Crear colaborador</h1>
+    <p class="rh-form-sub">Registra personal interno o externo vinculado al proyecto.</p>
+
+    <div class="rh-card">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+
+            <div class="rh-grid">
+                <div>
+                    <label class="rh-label" asp-for="Nombre"></label>
+                    <input class="form-control rh-input" asp-for="Nombre" />
+                    <span class="text-danger" asp-validation-for="Nombre"></span>
+                </div>
+                <div>
+                    <label class="rh-label" asp-for="Apellido"></label>
+                    <input class="form-control rh-input" asp-for="Apellido" />
+                    <span class="text-danger" asp-validation-for="Apellido"></span>
+                </div>
+                <div>
+                    <label class="rh-label" asp-for="Email"></label>
+                    <input class="form-control rh-input" asp-for="Email" />
+                </div>
+                <div>
+                    <label class="rh-label" asp-for="Tipo"></label>
+                    <input class="form-control rh-input" asp-for="Tipo" />
+                </div>
+                <div>
+                    <label class="rh-label" asp-for="Rol"></label>
+                    <input class="form-control rh-input" asp-for="Rol" />
+                </div>
+                <div>
+                    <label class="rh-label">Proyecto</label>
+                    <select class="form-select rh-input" asp-for="IdProyecto" asp-items="@(ViewData["IdProyecto"] as SelectList)"></select>
+                </div>
+            </div>
+
+            <div class="rh-actions">
+                <button class="rh-btn" type="submit">Guardar</button>
+                <a class="rh-btn rh-btn-secondary" asp-action="Index">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
