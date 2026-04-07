@@ -14,20 +14,65 @@
     </div>
 
     <div class="rh-grid" style="grid-template-columns: repeat(4, 1fr); margin-bottom: 14px;">
-        <div class="rh-field"><span class="rh-field-label">Experimentos</span><span class="rh-field-value">@Model.TotalExperimentos</span></div>
-        <div class="rh-field"><span class="rh-field-label">Muestras</span><span class="rh-field-value">@Model.TotalMuestras</span></div>
-        <div class="rh-field"><span class="rh-field-label">Resultados</span><span class="rh-field-value">@Model.TotalResultados</span></div>
-        <div class="rh-field"><span class="rh-field-label">Análisis</span><span class="rh-field-value">@Model.TotalAnalisis</span></div>
-        <div class="rh-field"><span class="rh-field-label">Validaciones</span><span class="rh-field-value">@Model.TotalValidaciones</span></div>
-        <div class="rh-field"><span class="rh-field-label">Publicaciones</span><span class="rh-field-value">@Model.TotalPublicaciones</span></div>
-        <div class="rh-field"><span class="rh-field-label">Repositorios</span><span class="rh-field-value">@Model.TotalRepositorios</span></div>
-        <div class="rh-field"><span class="rh-field-label">Colaboradores</span><span class="rh-field-value">@Model.TotalColaboradores</span></div>
+        <div class="rh-card">
+            <span class="rh-field-label">Línea de investigación</span>
+            <div class="rh-field-value">@(Model.Proyecto.LineaInvestigacion?.Nombre ?? "Sin línea")</div>
+            <div class="rh-actions"><a class="rh-btn rh-btn-secondary" asp-action="Relacionados" asp-route-id="@Model.Proyecto.IdProyecto" asp-route-tipo="linea">Ver línea</a></div>
+        </div>
+        <div class="rh-card">
+            <span class="rh-field-label">Sublínea</span>
+            <div class="rh-field-value">@(Model.Proyecto.SublineaInvestigacion?.Nombre ?? "Sin sublínea")</div>
+            <div class="rh-actions"><a class="rh-btn rh-btn-secondary" asp-action="Relacionados" asp-route-id="@Model.Proyecto.IdProyecto" asp-route-tipo="sublinea">Ver sublínea</a></div>
+        </div>
+        <div class="rh-card">
+            <span class="rh-field-label">Experimentos</span>
+            <div class="rh-field-value">@Model.TotalExperimentos</div>
+            <div class="rh-actions"><a class="rh-btn rh-btn-secondary" asp-action="Relacionados" asp-route-id="@Model.Proyecto.IdProyecto" asp-route-tipo="experimentos">Ver registros</a></div>
+        </div>
+        <div class="rh-card">
+            <span class="rh-field-label">Muestras</span>
+            <div class="rh-field-value">@Model.TotalMuestras</div>
+            <div class="rh-actions"><a class="rh-btn rh-btn-secondary" asp-action="Relacionados" asp-route-id="@Model.Proyecto.IdProyecto" asp-route-tipo="muestras">Ver registros</a></div>
+        </div>
+        <div class="rh-card">
+            <span class="rh-field-label">Resultados</span>
+            <div class="rh-field-value">@Model.TotalResultados</div>
+            <div class="rh-actions"><a class="rh-btn rh-btn-secondary" asp-action="Relacionados" asp-route-id="@Model.Proyecto.IdProyecto" asp-route-tipo="resultados">Ver registros</a></div>
+        </div>
+        <div class="rh-card">
+            <span class="rh-field-label">Análisis</span>
+            <div class="rh-field-value">@Model.TotalAnalisis</div>
+            <div class="rh-actions"><a class="rh-btn rh-btn-secondary" asp-action="Relacionados" asp-route-id="@Model.Proyecto.IdProyecto" asp-route-tipo="analisis">Ver registros</a></div>
+        </div>
+        <div class="rh-card">
+            <span class="rh-field-label">Validaciones</span>
+            <div class="rh-field-value">@Model.TotalValidaciones</div>
+            <div class="rh-actions"><a class="rh-btn rh-btn-secondary" asp-action="Relacionados" asp-route-id="@Model.Proyecto.IdProyecto" asp-route-tipo="validaciones">Ver registros</a></div>
+        </div>
+        <div class="rh-card">
+            <span class="rh-field-label">Publicaciones</span>
+            <div class="rh-field-value">@Model.TotalPublicaciones</div>
+            <div class="rh-actions"><a class="rh-btn rh-btn-secondary" asp-action="Relacionados" asp-route-id="@Model.Proyecto.IdProyecto" asp-route-tipo="publicaciones">Ver registros</a></div>
+        </div>
+        <div class="rh-card">
+            <span class="rh-field-label">Repositorios</span>
+            <div class="rh-field-value">@Model.TotalRepositorios</div>
+            <div class="rh-actions"><a class="rh-btn rh-btn-secondary" asp-action="Relacionados" asp-route-id="@Model.Proyecto.IdProyecto" asp-route-tipo="repositorios">Ver registros</a></div>
+        </div>
+        <div class="rh-card">
+            <span class="rh-field-label">Colaboradores</span>
+            <div class="rh-field-value">@Model.TotalColaboradores</div>
+            <div class="rh-actions"><a class="rh-btn rh-btn-secondary" asp-action="Relacionados" asp-route-id="@Model.Proyecto.IdProyecto" asp-route-tipo="colaboradores">Ver equipo</a></div>
+        </div>
     </div>
 
     <div class="rh-grid" style="grid-template-columns: 1fr 1fr; gap: 14px;">
         <div class="rh-card">
             <h3 class="rh-list-title" style="font-size:1.2rem;">Cronograma estratégico</h3>
             <p class="rh-meta">Total fases: @Model.TotalCronograma · Hitos pendientes: @Model.HitosPendientes · Hitos completados: @Model.HitosCompletados</p>
+            <div class="rh-actions" style="margin-top:0; margin-bottom:12px;">
+                <a class="rh-btn rh-btn-secondary" asp-action="Relacionados" asp-route-id="@Model.Proyecto.IdProyecto" asp-route-tipo="cronograma">Ver cronograma completo</a>
+            </div>
             @if (!Model.ProximosHitos.Any())
             {
                 <p class="rh-meta">No hay hitos definidos aún.</p>

@@ -52,17 +52,10 @@
                     }
                 </select>
 
-                @if (isAdmin)
-                {
-                    <label class="rh-check">
-                        <input type="checkbox" name="misProyectos" value="true" checked="@misProyectos" />
-                        Solo mis proyectos
-                    </label>
-                }
-                else
-                {
-                    <input type="hidden" name="misProyectos" value="true" />
-                }
+                <label class="rh-check">
+                    <input type="checkbox" name="misProyectos" value="true" checked="@misProyectos" />
+                    Solo mis proyectos
+                </label>
 
                 <button class="rh-filter-btn" type="submit">Filtrar</button>
                 <a class="rh-filter-btn" asp-controller="Proyectos" asp-action="Index" asp-route-misProyectos="@misProyectos">Limpiar</a>
@@ -72,6 +65,10 @@
         @if (puedeCrear)
         {
             <a class="rh-btn" asp-controller="Proyectos" asp-action="Create">Nuevo proyecto</a>
+        }
+        else
+        {
+            <a class="rh-btn" asp-controller="Proyectos" asp-action="CreatePropio">Proponer proyecto</a>
         }
     </div>
 
@@ -91,12 +88,12 @@
             @foreach (var item in Model)
             {
                 var permiso = permisos.ContainsKey(item.IdProyecto) ? permisos[item.IdProyecto] : "Ninguno";
-                var puedeEditar = permiso == "Admin" || permiso == "Write" || isAdmin;
+                var puedeEditar = isAdmin;
 
                 <tr>
                     <td>@item.Titulo</td>
                     <td><span class="rh-pill">@item.Estado</span></td>
-                    <td>@item.LineaInvestigacion?.Nombre / @item.SublineaInvestigacion?.Nombre</td>
+                    <td>@(item.LineaInvestigacion?.Nombre ?? "Sin línea") / @(item.SublineaInvestigacion?.Nombre ?? "Sin sublínea")</td>
                     <td>@item.Institucion?.Nombre</td>
                     <td><span class="rh-pill">@permiso</span></td>
                     <td class="rh-actions">

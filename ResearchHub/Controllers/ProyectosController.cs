@@ -30,14 +30,10 @@ namespace ResearchHub.Controllers
             var isAdmin = User.IsInRole(Roles.Administrador);
             var userEmail = User.Identity?.Name;
 
-            if (!isAdmin)
-            {
-                misProyectos = true;
-            }
-
             var query = _context.Proyectos
                 .Include(p => p.Institucion)
                 .Include(p => p.InvestigadorPrincipal)
+                .Include(p => p.LineaInvestigacion)
                 .Include(p => p.SublineaInvestigacion)
                 .AsNoTracking()
                 .AsQueryable();
@@ -265,9 +261,57 @@ namespace ResearchHub.Controllers
             return View(vm);
         }
 
+        public async Task<IActionResult> Relacionados(int id, string tipo)
+        {
+            var proyecto = await _context.Proyectos
+                .Include(p => p.LineaInvestigacion)
+                .Include(p => p.SublineaInvestigacion)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(p => p.IdProyecto == id);
+
+            if (proyecto == null) return NotFound();
+
+            var isAdmin = User.IsInRole(Roles.Administrador);
+            var nivel = await ObtenerNivelAccesoAsync(id, User.Identity?.Name, isAdmin);
+            if (nivel == NivelAcceso.Ninguno)
+            {
+                return Forbid();
+            }
+
+            var key = (tipo ?? string.Empty).Trim().ToLowerInvariant();
+            if (string.IsNullOrWhiteSpace(key))
+            {
+                return RedirectToAction(nameof(Hub), new { id });
+            }
+
+            ProyectoRelacionadosViewModel? vm = key switch
+            {
+                "linea" => BuildLineaRelacionada(proyecto),
+                "sublinea" => BuildSublineaRelacionada(proyecto),
+                "experimentos" => await BuildExperimentosRelacionadosAsync(proyecto),
+                "muestras" => await BuildMuestrasRelacionadasAsync(proyecto),
+                "resultados" => await BuildResultadosRelacionadosAsync(proyecto),
+                "analisis" => await BuildAnalisisRelacionadosAsync(proyecto),
+                "validaciones" => await BuildValidacionesRelacionadasAsync(proyecto),
+                "publicaciones" => await BuildPublicacionesRelacionadasAsync(proyecto),
+                "repositorios" => await BuildRepositoriosRelacionadosAsync(proyecto),
+                "colaboradores" => await BuildColaboradoresRelacionadosAsync(proyecto),
+                "cronograma" => await BuildCronogramaRelacionadoAsync(proyecto),
+                _ => null
+            };
+
+            if (vm == null)
+            {
+                return NotFound();
+            }
+
+            return View(vm);
+        }
+
         [Authorize(Roles = Roles.Administrador)]
         public async Task<IActionResult> Create()
         {
+            ViewData["ModoInvestigador"] = false;
             await CargarCombosAsync();
             return View();
         }
@@ -290,6 +334,59 @@ namespace ResearchHub.Controllers
             await _context.SaveChangesAsync();
 
             return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize(Roles = Roles.Usuario + "," + Roles.Administrador)]
+        public async Task<IActionResult> CreatePropio()
+        {
+            var investigador = await BuscarInvestigadorActualAsync();
+            if (investigador == null)
+            {
+                return Forbid();
+            }
+
+            ViewData["ModoInvestigador"] = true;
+            ViewData["InvestigadorActual"] = investigador.Nombre + " " + investigador.Apellido;
+            ViewData["InstitucionActual"] = investigador.Institucion?.Nombre ?? "Sin institución";
+
+            await CargarCombosAsync();
+            return View("Create", new Proyecto
+            {
+                IdInvestigadorPrincipal = investigador.IdInvestigador,
+                IdInstitucion = investigador.IdInstitucion
+            });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = Roles.Usuario + "," + Roles.Administrador)]
+        public async Task<IActionResult> CreatePropio(Proyecto proyecto)
+        {
+            var investigador = await BuscarInvestigadorActualAsync();
+            if (investigador == null)
+            {
+                return Forbid();
+            }
+
+            proyecto.IdInvestigadorPrincipal = investigador.IdInvestigador;
+            proyecto.IdInstitucion = investigador.IdInstitucion;
+
+            ValidarSublinea(proyecto);
+
+            if (!ModelState.IsValid)
+            {
+                ViewData["ModoInvestigador"] = true;
+                ViewData["InvestigadorActual"] = investigador.Nombre + " " + investigador.Apellido;
+                ViewData["InstitucionActual"] = investigador.Institucion?.Nombre ?? "Sin institución";
+                await CargarCombosAsync(proyecto.IdLinea, proyecto.IdSublinea);
+                return View("Create", proyecto);
+            }
+
+            proyecto.FechaCreacion = DateTime.UtcNow;
+            _context.Proyectos.Add(proyecto);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Index), new { misProyectos = true });
         }
 
         public async Task<IActionResult> Edit(int? id)
@@ -525,9 +622,294 @@ namespace ResearchHub.Controllers
                 idSublinea);
         }
 
+        private async Task<Investigador?> BuscarInvestigadorActualAsync()
+        {
+            var userEmail = User.Identity?.Name;
+            if (string.IsNullOrWhiteSpace(userEmail))
+            {
+                return null;
+            }
+
+            return await _context.Investigadores
+                .Include(i => i.Institucion)
+                .AsNoTracking()
+                .FirstOrDefaultAsync(i => i.Email == userEmail);
+        }
+
         private async Task<bool> ProyectoExisteAsync(int id)
         {
             return await _context.Proyectos.AnyAsync(e => e.IdProyecto == id);
+        }
+
+        private ProyectoRelacionadosViewModel BuildLineaRelacionada(Proyecto proyecto)
+        {
+            var filas = new List<ProyectoRelacionadoRowViewModel>();
+            if (proyecto.LineaInvestigacion != null)
+            {
+                filas.Add(new ProyectoRelacionadoRowViewModel
+                {
+                    Valores = new[] { proyecto.LineaInvestigacion.Nombre, proyecto.LineaInvestigacion.Descripcion ?? string.Empty, proyecto.LineaInvestigacion.Activa ? "Sí" : "No" },
+                    DetalleController = "LineasInvestigacion",
+                    DetalleId = proyecto.LineaInvestigacion.IdLinea
+                });
+            }
+
+            return new ProyectoRelacionadosViewModel
+            {
+                Proyecto = proyecto,
+                Tipo = "linea",
+                Titulo = "Línea de investigación",
+                Columnas = new[] { "Nombre", "Descripción", "Activa" },
+                Filas = filas
+            };
+        }
+
+        private ProyectoRelacionadosViewModel BuildSublineaRelacionada(Proyecto proyecto)
+        {
+            var filas = new List<ProyectoRelacionadoRowViewModel>();
+            if (proyecto.SublineaInvestigacion != null)
+            {
+                filas.Add(new ProyectoRelacionadoRowViewModel
+                {
+                    Valores = new[] { proyecto.SublineaInvestigacion.Nombre, proyecto.SublineaInvestigacion.Descripcion ?? string.Empty, proyecto.SublineaInvestigacion.Activa ? "Sí" : "No" },
+                    DetalleController = "SublineasInvestigacion",
+                    DetalleId = proyecto.SublineaInvestigacion.IdSublinea
+                });
+            }
+
+            return new ProyectoRelacionadosViewModel
+            {
+                Proyecto = proyecto,
+                Tipo = "sublinea",
+                Titulo = "Sublínea de investigación",
+                Columnas = new[] { "Nombre", "Descripción", "Activa" },
+                Filas = filas
+            };
+        }
+
+        private async Task<ProyectoRelacionadosViewModel> BuildExperimentosRelacionadosAsync(Proyecto proyecto)
+        {
+            var filas = await _context.Experimentos
+                .AsNoTracking()
+                .Where(e => e.IdProyecto == proyecto.IdProyecto)
+                .OrderByDescending(e => e.FechaInicio)
+                .Select(e => new ProyectoRelacionadoRowViewModel
+                {
+                    Valores = new[] { e.Titulo, e.Estado ?? string.Empty, e.FechaInicio.HasValue ? e.FechaInicio.Value.ToString("yyyy-MM-dd") : string.Empty },
+                    DetalleController = "Experimentos",
+                    DetalleId = e.IdExperimento
+                })
+                .ToListAsync();
+
+            return new ProyectoRelacionadosViewModel
+            {
+                Proyecto = proyecto,
+                Tipo = "experimentos",
+                Titulo = "Experimentos del proyecto",
+                Columnas = new[] { "Título", "Estado", "Inicio" },
+                Filas = filas
+            };
+        }
+
+        private async Task<ProyectoRelacionadosViewModel> BuildMuestrasRelacionadasAsync(Proyecto proyecto)
+        {
+            var filas = await _context.Muestras
+                .AsNoTracking()
+                .Where(m => m.IdProyecto == proyecto.IdProyecto)
+                .OrderByDescending(m => m.FechaRecoleccion)
+                .Select(m => new ProyectoRelacionadoRowViewModel
+                {
+                    Valores = new[] { m.Codigo, m.Tipo ?? string.Empty, m.FechaRecoleccion.HasValue ? m.FechaRecoleccion.Value.ToString("yyyy-MM-dd") : string.Empty },
+                    DetalleController = "Muestras",
+                    DetalleId = m.IdMuestra
+                })
+                .ToListAsync();
+
+            return new ProyectoRelacionadosViewModel
+            {
+                Proyecto = proyecto,
+                Tipo = "muestras",
+                Titulo = "Muestras del proyecto",
+                Columnas = new[] { "Código", "Tipo", "Fecha" },
+                Filas = filas
+            };
+        }
+
+        private async Task<ProyectoRelacionadosViewModel> BuildResultadosRelacionadosAsync(Proyecto proyecto)
+        {
+            var filas = await _context.Resultados
+                .Include(r => r.Experimento)
+                .AsNoTracking()
+                .Where(r => r.Experimento != null && r.Experimento.IdProyecto == proyecto.IdProyecto)
+                .OrderByDescending(r => r.FechaRegistro)
+                .Select(r => new ProyectoRelacionadoRowViewModel
+                {
+                    Valores = new[] { $"Resultado #{r.IdResultado}", r.Experimento != null ? r.Experimento.Titulo : string.Empty, r.Valor ?? string.Empty, r.FechaRegistro.ToString("yyyy-MM-dd") },
+                    DetalleController = "Resultados",
+                    DetalleId = r.IdResultado
+                })
+                .ToListAsync();
+
+            return new ProyectoRelacionadosViewModel
+            {
+                Proyecto = proyecto,
+                Tipo = "resultados",
+                Titulo = "Resultados del proyecto",
+                Columnas = new[] { "Registro", "Experimento", "Valor", "Fecha" },
+                Filas = filas
+            };
+        }
+
+        private async Task<ProyectoRelacionadosViewModel> BuildAnalisisRelacionadosAsync(Proyecto proyecto)
+        {
+            var filas = await _context.Analisis
+                .Include(a => a.Resultado)
+                    .ThenInclude(r => r!.Experimento)
+                .AsNoTracking()
+                .Where(a => a.Resultado != null && a.Resultado.Experimento != null && a.Resultado.Experimento.IdProyecto == proyecto.IdProyecto)
+                .OrderByDescending(a => a.Fecha)
+                .Select(a => new ProyectoRelacionadoRowViewModel
+                {
+                    Valores = new[] { a.Titulo, a.Metodo ?? string.Empty, a.Fecha.HasValue ? a.Fecha.Value.ToString("yyyy-MM-dd") : string.Empty },
+                    DetalleController = "Analisis",
+                    DetalleId = a.IdAnalisis
+                })
+                .ToListAsync();
+
+            return new ProyectoRelacionadosViewModel
+            {
+                Proyecto = proyecto,
+                Tipo = "analisis",
+                Titulo = "Análisis del proyecto",
+                Columnas = new[] { "Título", "Método", "Fecha" },
+                Filas = filas
+            };
+        }
+
+        private async Task<ProyectoRelacionadosViewModel> BuildValidacionesRelacionadasAsync(Proyecto proyecto)
+        {
+            var filas = await _context.Validaciones
+                .Include(v => v.Analisis)
+                    .ThenInclude(a => a!.Resultado)
+                        .ThenInclude(r => r!.Experimento)
+                .AsNoTracking()
+                .Where(v => v.Analisis != null && v.Analisis.Resultado != null && v.Analisis.Resultado.Experimento != null && v.Analisis.Resultado.Experimento.IdProyecto == proyecto.IdProyecto)
+                .OrderByDescending(v => v.Fecha)
+                .Select(v => new ProyectoRelacionadoRowViewModel
+                {
+                    Valores = new[] { v.Resultado ?? string.Empty, v.Validador ?? string.Empty, v.Fecha.HasValue ? v.Fecha.Value.ToString("yyyy-MM-dd") : string.Empty },
+                    DetalleController = "Validaciones",
+                    DetalleId = v.IdValidacion
+                })
+                .ToListAsync();
+
+            return new ProyectoRelacionadosViewModel
+            {
+                Proyecto = proyecto,
+                Tipo = "validaciones",
+                Titulo = "Validaciones del proyecto",
+                Columnas = new[] { "Resultado", "Validador", "Fecha" },
+                Filas = filas
+            };
+        }
+
+        private async Task<ProyectoRelacionadosViewModel> BuildPublicacionesRelacionadasAsync(Proyecto proyecto)
+        {
+            var filas = await _context.Publicaciones
+                .AsNoTracking()
+                .Where(p => p.IdProyecto == proyecto.IdProyecto)
+                .OrderByDescending(p => p.FechaPublicacion)
+                .Select(p => new ProyectoRelacionadoRowViewModel
+                {
+                    Valores = new[] { p.Titulo, p.Revista ?? string.Empty, p.FechaPublicacion.HasValue ? p.FechaPublicacion.Value.ToString("yyyy-MM-dd") : string.Empty },
+                    DetalleController = "Publicaciones",
+                    DetalleId = p.IdPublicacion
+                })
+                .ToListAsync();
+
+            return new ProyectoRelacionadosViewModel
+            {
+                Proyecto = proyecto,
+                Tipo = "publicaciones",
+                Titulo = "Publicaciones del proyecto",
+                Columnas = new[] { "Título", "Revista", "Fecha" },
+                Filas = filas
+            };
+        }
+
+        private async Task<ProyectoRelacionadosViewModel> BuildRepositoriosRelacionadosAsync(Proyecto proyecto)
+        {
+            var filas = await _context.RepositoriosDatos
+                .AsNoTracking()
+                .Where(r => r.IdProyecto == proyecto.IdProyecto)
+                .OrderByDescending(r => r.FechaRegistro)
+                .Select(r => new ProyectoRelacionadoRowViewModel
+                {
+                    Valores = new[] { r.Nombre, r.Tipo ?? string.Empty, r.Url ?? string.Empty },
+                    DetalleController = "RepositoriosDatos",
+                    DetalleId = r.IdRepositorio
+                })
+                .ToListAsync();
+
+            return new ProyectoRelacionadosViewModel
+            {
+                Proyecto = proyecto,
+                Tipo = "repositorios",
+                Titulo = "Repositorios del proyecto",
+                Columnas = new[] { "Nombre", "Tipo", "URL" },
+                Filas = filas
+            };
+        }
+
+        private async Task<ProyectoRelacionadosViewModel> BuildColaboradoresRelacionadosAsync(Proyecto proyecto)
+        {
+            var filas = await _context.Colaboradores
+                .AsNoTracking()
+                .Where(c => c.IdProyecto == proyecto.IdProyecto)
+                .OrderBy(c => c.Apellido)
+                .ThenBy(c => c.Nombre)
+                .Select(c => new ProyectoRelacionadoRowViewModel
+                {
+                    Valores = new[] { c.Nombre + " " + c.Apellido, c.Rol ?? string.Empty, c.Email ?? string.Empty },
+                    DetalleController = "Colaboradores",
+                    DetalleId = c.IdColaborador
+                })
+                .ToListAsync();
+
+            return new ProyectoRelacionadosViewModel
+            {
+                Proyecto = proyecto,
+                Tipo = "colaboradores",
+                Titulo = "Colaboradores del proyecto",
+                Columnas = new[] { "Nombre", "Rol", "Email" },
+                Filas = filas
+            };
+        }
+
+        private async Task<ProyectoRelacionadosViewModel> BuildCronogramaRelacionadoAsync(Proyecto proyecto)
+        {
+            var filas = await _context.Cronogramas
+                .Include(c => c.Dependencia)
+                .AsNoTracking()
+                .Where(c => c.IdProyecto == proyecto.IdProyecto)
+                .OrderBy(c => c.FechaInicio)
+                .ThenBy(c => c.NombreFase)
+                .Select(c => new ProyectoRelacionadoRowViewModel
+                {
+                    Valores = new[] { c.NombreFase, c.EsHito ? "Sí" : "No", c.Estado ?? string.Empty, $"{c.PorcentajeAvance}%" },
+                    DetalleController = "Cronogramas",
+                    DetalleId = c.IdCronograma
+                })
+                .ToListAsync();
+
+            return new ProyectoRelacionadosViewModel
+            {
+                Proyecto = proyecto,
+                Tipo = "cronograma",
+                Titulo = "Cronograma del proyecto",
+                Columnas = new[] { "Fase", "Hito", "Estado", "Avance" },
+                Filas = filas
+            };
         }
     }
 }

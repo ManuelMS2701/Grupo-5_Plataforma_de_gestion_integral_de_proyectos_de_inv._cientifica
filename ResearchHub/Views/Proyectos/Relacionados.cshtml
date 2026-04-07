@@ -1,0 +1,77 @@
+@model ResearchHub.Models.ProyectoRelacionadosViewModel
+
+@{
+    ViewData["Title"] = Model.Titulo;
+}
+
+<div class="rh-list-wrap">
+    <div class="rh-list-header">
+        <div>
+            <h1 class="rh-list-title">@Model.Titulo</h1>
+            <p class="rh-meta">Proyecto: @Model.Proyecto.Titulo</p>
+        </div>
+        <div class="rh-actions" style="margin-top:0;">
+            <a class="rh-btn rh-btn-secondary" asp-action="Hub" asp-route-id="@Model.Proyecto.IdProyecto">Volver al hub</a>
+            <a class="rh-btn rh-btn-secondary" asp-action="Details" asp-route-id="@Model.Proyecto.IdProyecto">Ver proyecto</a>
+        </div>
+    </div>
+
+    <div class="rh-card" style="margin-bottom:16px;">
+        <div class="rh-grid" style="grid-template-columns: repeat(3, 1fr);">
+            <div class="rh-field">
+                <span class="rh-field-label">Línea</span>
+                <span class="rh-field-value">@(Model.Proyecto.LineaInvestigacion?.Nombre ?? "Sin línea")</span>
+            </div>
+            <div class="rh-field">
+                <span class="rh-field-label">Sublínea</span>
+                <span class="rh-field-value">@(Model.Proyecto.SublineaInvestigacion?.Nombre ?? "Sin sublínea")</span>
+            </div>
+            <div class="rh-field">
+                <span class="rh-field-label">Estado del proyecto</span>
+                <span class="rh-field-value">@(Model.Proyecto.Estado ?? "Sin estado")</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="rh-table">
+        @if (!Model.Filas.Any())
+        {
+            <div class="rh-empty">No hay registros relacionados para este proyecto en este apartado.</div>
+        }
+        else
+        {
+            <table class="table">
+                <thead>
+                    <tr>
+                        @foreach (var columna in Model.Columnas)
+                        {
+                            <th>@columna</th>
+                        }
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var fila in Model.Filas)
+                    {
+                        <tr>
+                            @foreach (var valor in fila.Valores)
+                            {
+                                <td>@(string.IsNullOrWhiteSpace(valor) ? "-" : valor)</td>
+                            }
+                            <td class="rh-row-actions">
+                                @if (!string.IsNullOrWhiteSpace(fila.DetalleController) && fila.DetalleId.HasValue)
+                                {
+                                    <a asp-controller="@fila.DetalleController" asp-action="Details" asp-route-id="@fila.DetalleId">Detalles</a>
+                                }
+                                else
+                                {
+                                    <span class="rh-meta">Sin detalle</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+    </div>
+</div>

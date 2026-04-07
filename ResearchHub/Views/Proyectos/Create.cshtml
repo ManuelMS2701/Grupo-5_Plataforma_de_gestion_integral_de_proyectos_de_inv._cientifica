@@ -2,6 +2,9 @@
 
 @{
     ViewData["Title"] = "Nuevo proyecto";
+    var modoInvestigador = (bool?)ViewData["ModoInvestigador"] == true;
+    var investigadorActual = ViewData["InvestigadorActual"]?.ToString() ?? "";
+    var institucionActual = ViewData["InstitucionActual"]?.ToString() ?? "";
 }
 
 <style>
@@ -85,10 +88,10 @@
 
 <div class="rh-form-wrap">
     <h1 class="rh-form-title">Crear proyecto</h1>
-    <p class="rh-form-sub">Completa los datos básicos del proyecto.</p>
+    <p class="rh-form-sub">@(modoInvestigador ? "El proyecto quedará asociado automáticamente a tu perfil de investigador." : "Completa los datos básicos del proyecto.")</p>
 
     <div class="rh-card">
-        <form asp-action="Create" method="post">
+        <form asp-action="@(modoInvestigador ? "CreatePropio" : "Create")" method="post">
             @Html.AntiForgeryToken()
 
             <div class="rh-grid">
@@ -114,15 +117,32 @@
                     <input class="form-control rh-input" asp-for="FechaFin" type="date" />
                 </div>
 
-                <div>
-                    <label class="rh-label">Investigador principal</label>
-                    <select class="form-select rh-input" asp-for="IdInvestigadorPrincipal" asp-items="@(ViewData["Investigadores"] as SelectList)"></select>
-                </div>
+                @if (modoInvestigador)
+                {
+                    <input type="hidden" asp-for="IdInvestigadorPrincipal" />
+                    <input type="hidden" asp-for="IdInstitucion" />
+                    <div>
+                        <label class="rh-label">Investigador principal</label>
+                        <input class="form-control rh-input" value="@investigadorActual" readonly />
+                    </div>
 
-                <div>
-                    <label class="rh-label">Institución</label>
-                    <select class="form-select rh-input" asp-for="IdInstitucion" asp-items="@(ViewData["Instituciones"] as SelectList)"></select>
-                </div>
+                    <div>
+                        <label class="rh-label">Institución</label>
+                        <input class="form-control rh-input" value="@institucionActual" readonly />
+                    </div>
+                }
+                else
+                {
+                    <div>
+                        <label class="rh-label">Investigador principal</label>
+                        <select class="form-select rh-input" asp-for="IdInvestigadorPrincipal" asp-items="@(ViewData["Investigadores"] as SelectList)"></select>
+                    </div>
+
+                    <div>
+                        <label class="rh-label">Institución</label>
+                        <select class="form-select rh-input" asp-for="IdInstitucion" asp-items="@(ViewData["Instituciones"] as SelectList)"></select>
+                    </div>
+                }
 
                 <div>
                     <label class="rh-label">Línea de investigación</label>
