@@ -241,6 +241,18 @@ namespace ResearchHub.Controllers
                 "IdCronograma",
                 "Nombre",
                 idDependencia);
+
+            ViewData["EstadosCronograma"] = new SelectList(
+                new[]
+                {
+                    new { Value = "Pendiente", Text = "Pendiente" },
+                    new { Value = "En progreso", Text = "En progreso" },
+                    new { Value = "Completado", Text = "Completado" },
+                    new { Value = "Bloqueado", Text = "Bloqueado" },
+                    new { Value = "Cancelado", Text = "Cancelado" }
+                },
+                "Value",
+                "Text");
         }
 
         private void ValidarDependencia(Cronograma model)

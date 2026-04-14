@@ -1,33 +1,20 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
-using ResearchHub.Models;
+using ResearchHub.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ResearchHub.Data.ResearchHubContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddIdentity<ResearchHub.Models.ApplicationUser, IdentityRole>(options =>
-{
-    options.Password.RequiredLength = 6;
-    options.Password.RequireDigit = false;
-    options.Password.RequireLowercase = false;
-    options.Password.RequireUppercase = false;
-    options.Password.RequireNonAlphanumeric = false;
-
-    options.Lockout.MaxFailedAccessAttempts = 5;
-    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
-    options.Lockout.AllowedForNewUsers = true;
-})
-    .AddEntityFrameworkStores<ResearchHub.Data.ResearchHubContext>()
-    .AddDefaultTokenProviders();
-
-builder.Services.ConfigureApplicationCookie(options =>
-{
-    options.LoginPath = "/Account/Login";
-    options.AccessDeniedPath = "/Account/AccessDenied";
-});
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.AccessDeniedPath = "/Account/AccessDenied";
+        options.ExpireTimeSpan = TimeSpan.FromHours(10);
+        options.SlidingExpiration = true;
+    });
 
 builder.Services.AddAuthorization(options =>
 {
@@ -57,55 +44,13 @@ app.MapControllerRoute(
     pattern: "{controller=Account}/{action=Login}/{id?}")
     .WithStaticAssets();
 
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-    var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-
-    await EnsureRolesAndAdminAsync(roleManager, userManager);
-}
+await SeedDemoUsersAsync(app);
 
 app.Run();
 
-static async Task EnsureRolesAndAdminAsync(
-    RoleManager<IdentityRole> roleManager,
-    UserManager<ApplicationUser> userManager)
+static async Task SeedDemoUsersAsync(WebApplication app)
 {
-    if (!await roleManager.RoleExistsAsync(Roles.Administrador))
-    {
-        await roleManager.CreateAsync(new IdentityRole(Roles.Administrador));
-    }
-
-    if (!await roleManager.RoleExistsAsync(Roles.Usuario))
-    {
-        await roleManager.CreateAsync(new IdentityRole(Roles.Usuario));
-    }
-
-    const string adminEmail = "admin@researchhub.local";
-    const string adminPassword = "Admin123";
-
-    var admin = await userManager.FindByEmailAsync(adminEmail);
-    if (admin == null)
-    {
-        admin = new ApplicationUser
-        {
-            UserName = adminEmail,
-            Email = adminEmail,
-            EmailConfirmed = true
-        };
-
-        var createResult = await userManager.CreateAsync(admin, adminPassword);
-        if (!createResult.Succeeded)
-        {
-            return;
-        }
-    }
-
-    if (!await userManager.IsInRoleAsync(admin, Roles.Administrador))
-    {
-        await userManager.AddToRoleAsync(admin, Roles.Administrador);
-    }
+    using var scope = app.Services.CreateScope();
+    var context = scope.ServiceProvider.GetRequiredService<ResearchHubContext>();
+    await DemoUsersSeeder.SeedAsync(context);
 }
-
-

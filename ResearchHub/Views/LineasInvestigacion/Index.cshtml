@@ -1,7 +1,7 @@
-Ôªø@model IEnumerable<ResearchHub.Models.LineaInvestigacion>
+@model IEnumerable<ResearchHub.Models.LineaInvestigacion>
 
 @{
-    ViewData["Title"] = "L√≠neas de investigaci√≥n";
+    ViewData["Title"] = "LÌneas de investigaciÛn";
 }
 
 <style>
@@ -77,19 +77,18 @@
 
 <div class="rh-list-wrap">
     <div class="rh-list-header">
-        <h1 class="rh-list-title">L√≠neas de investigaci√≥n</h1>
+        <h1 class="rh-list-title">LÌneas de investigaciÛn</h1>
         <div style="display:flex; gap:10px;">
-            <a class="rh-btn" asp-controller="SublineasInvestigacion" asp-action="Index">Subl√≠neas</a>
-            <a class="rh-btn" asp-controller="LineasInvestigacion" asp-action="Create">Nueva l√≠nea</a>
+            <a class="rh-btn" asp-controller="SublineasInvestigacion" asp-action="Index">SublÌneas</a>
+            <a class="rh-btn" asp-controller="LineasInvestigacion" asp-action="Create">Nueva lÌnea</a>
         </div>
     </div>
 
     <div class="rh-table">
-        <table class="table">
+        <table class="table rh-table-fixed">
             <thead>
                 <tr>
                     <th>Nombre</th>
-                    <th>Descripci√≥n</th>
                     <th>Activa</th>
                     <th>Sublineas</th>
                     <th></th>
@@ -99,9 +98,8 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@item.Nombre</td>
-                    <td>@item.Descripcion</td>
-                    <td><span class="rh-pill">@(item.Activa ? "S√≠" : "No")</span></td>
+                    <td class="rh-cell-clip" title="@item.Nombre">@item.Nombre</td>
+                    <td><span class="rh-pill">@(item.Activa ? "SÌ" : "No")</span></td>
                     <td><span class="rh-pill">@item.Sublineas.Count</span></td>
                     <td class="rh-actions">
                         <a asp-action="Edit" asp-route-id="@item.IdLinea">Editar</a>
@@ -114,3 +112,5 @@
         </table>
     </div>
 </div>
+
+@await Html.PartialAsync("_SimplePager")

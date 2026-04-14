@@ -1,4 +1,4 @@
-Ôªø@model IEnumerable<ResearchHub.Models.Proyecto>
+@model IEnumerable<ResearchHub.Models.Proyecto>
 @using System.Collections.Generic
 
 @{
@@ -36,7 +36,7 @@
         <div>
             <h1 class="rh-list-title">Proyectos</h1>
             <form class="rh-filters" method="get" asp-controller="Proyectos" asp-action="Index">
-                <input class="rh-input" type="text" name="search" value="@search" placeholder="Buscar por t√≠tulo, instituci√≥n o subl√≠nea" />
+                <input class="rh-input" type="text" name="search" value="@search" placeholder="Buscar por tÌtulo, instituciÛn o sublÌnea" />
                 <select class="rh-select" name="estado">
                     <option value="">Todos los estados</option>
                     @foreach (var estado in estados)
@@ -60,7 +60,7 @@
                 <button class="rh-filter-btn" type="submit">Filtrar</button>
                 <a class="rh-filter-btn" asp-controller="Proyectos" asp-action="Index" asp-route-misProyectos="@misProyectos">Limpiar</a>
             </form>
-            <p class="rh-count">@Model.Count() proyectos encontrados</p>
+            <p class="rh-count">@((int?)ViewBag.TotalItems ?? Model.Count()) proyectos encontrados</p>
         </div>
         @if (puedeCrear)
         {
@@ -73,14 +73,12 @@
     </div>
 
     <div class="rh-table">
-        <table class="table">
+        <table class="table rh-table-fixed">
             <thead>
                 <tr>
-                    <th>T√≠tulo</th>
-                    <th>Estado</th>
-                    <th>L√≠nea/Sublinea</th>
-                    <th>Instituci√≥n</th>
-                    <th>Acceso</th>
+                    <th>TÌtulo</th>
+                    <th>Investigador</th>
+                    <th>InstituciÛn</th>
                     <th></th>
                 </tr>
             </thead>
@@ -91,11 +89,9 @@
                 var puedeEditar = isAdmin;
 
                 <tr>
-                    <td>@item.Titulo</td>
-                    <td><span class="rh-pill">@item.Estado</span></td>
-                    <td>@(item.LineaInvestigacion?.Nombre ?? "Sin l√≠nea") / @(item.SublineaInvestigacion?.Nombre ?? "Sin subl√≠nea")</td>
-                    <td>@item.Institucion?.Nombre</td>
-                    <td><span class="rh-pill">@permiso</span></td>
+                    <td class="rh-cell-clip" title="@item.Titulo">@item.Titulo</td>
+                    <td class="rh-cell-clip" title="@(item.InvestigadorPrincipal != null ? item.InvestigadorPrincipal.Nombre + " " + item.InvestigadorPrincipal.Apellido : "Sin investigador")">@(item.InvestigadorPrincipal != null ? item.InvestigadorPrincipal.Nombre + " " + item.InvestigadorPrincipal.Apellido : "Sin investigador")</td>
+                    <td class="rh-cell-clip" title="@item.Institucion?.Nombre">@item.Institucion?.Nombre</td>
                     <td class="rh-actions">
                         @if (puedeEditar)
                         {
@@ -114,3 +110,5 @@
         </table>
     </div>
 </div>
+
+@await Html.PartialAsync("_SimplePager")

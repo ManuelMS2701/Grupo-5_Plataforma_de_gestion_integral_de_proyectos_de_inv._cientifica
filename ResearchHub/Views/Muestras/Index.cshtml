@@ -107,15 +107,13 @@
     </div>
 
     <div class="rh-table">
-        <table class="table">
+        <table class="table rh-table-fixed">
             <thead>
                 <tr>
                     <th>Codigo</th>
                     <th>Tipo</th>
                     <th>Proyecto</th>
                     <th>Origen</th>
-                    <th>Condicion</th>
-                    <th>Recoleccion</th>
                     <th></th>
                 </tr>
             </thead>
@@ -124,11 +122,9 @@
             {
                 <tr>
                     <td><span class="rh-pill">@item.Codigo</span></td>
-                    <td>@item.Tipo</td>
-                    <td>@item.Proyecto?.Titulo</td>
-                    <td>@item.Origen</td>
-                    <td>@item.Condicion</td>
-                    <td>@item.FechaRecoleccion?.ToString("yyyy-MM-dd")</td>
+                    <td class="rh-cell-clip" title="@item.Tipo">@item.Tipo</td>
+                    <td class="rh-cell-clip" title="@item.Proyecto?.Titulo">@item.Proyecto?.Titulo</td>
+                    <td class="rh-cell-clip" title="@item.Origen">@item.Origen</td>
                     <td class="rh-actions">
                         <a asp-action="Edit" asp-route-id="@item.IdMuestra">Editar</a>
                         <a asp-action="Details" asp-route-id="@item.IdMuestra">Detalles</a>
@@ -140,3 +136,5 @@
         </table>
     </div>
 </div>
+
+@await Html.PartialAsync("_SimplePager")

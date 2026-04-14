@@ -1,0 +1,94 @@
+@model ResearchHub.Models.MuestrasSeguimientoViewModel
+
+@{
+    ViewData["Title"] = "Mis muestras";
+    var puedeRegistrarSeguimiento = ViewData["PuedeRegistrarSeguimientoMuestra"] as bool? == true;
+}
+
+<div class="rh-list-wrap">
+    <div class="rh-list-header">
+        <div>
+            <h1 class="rh-list-title"><i class="bi bi-droplet"></i> Seguimiento de muestras</h1>
+            <p class="rh-meta">Trazabilidad operativa de muestras por proyecto.</p>
+        </div>
+        <a class="rh-btn rh-btn-secondary" asp-action="Index">Volver a mi espacio</a>
+    </div>
+
+    @if (TempData["MiEspacioError"] != null)
+    {
+        <div class="alert alert-danger">@TempData["MiEspacioError"]</div>
+    }
+
+    <div class="rh-mini-list">
+        @foreach (var item in Model.Muestras)
+        {
+            var historial = Model.Seguimientos.ContainsKey(item.IdMuestra) ? Model.Seguimientos[item.IdMuestra] : Array.Empty<ResearchHub.Models.SeguimientoMuestra>();
+            <div class="rh-card">
+                <div class="rh-section-head">
+                    <h3 class="rh-panel-title">@item.Codigo · @(item.Tipo ?? "Sin tipo")</h3>
+                    <span class="rh-pill">@item.Proyecto?.Titulo</span>
+                </div>
+                <p class="rh-meta">Origen: @(item.Origen ?? "-") · Condicion: @(item.Condicion ?? "-") · Fecha: @(item.FechaRecoleccion?.ToString("yyyy-MM-dd") ?? "-")</p>
+
+                @if (puedeRegistrarSeguimiento)
+                {
+                    <form asp-action="RegistrarSeguimientoMuestra" method="post" class="rh-card" style="margin-bottom:14px; background:#f8fbff;">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="idMuestra" value="@item.IdMuestra" />
+                        <div class="rh-grid" style="grid-template-columns:repeat(3,1fr);">
+                            <div>
+                                <label class="rh-label">Estado</label>
+                                <select class="form-select rh-input" name="estado">
+                                    <option>Recibida</option>
+                                    <option>En analisis</option>
+                                    <option>Procesada</option>
+                                    <option>Almacenada</option>
+                                    <option>Descartada</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="rh-label">Ubicacion</label>
+                                <input class="form-control rh-input" name="ubicacion" />
+                            </div>
+                            <div class="rh-grid-full">
+                                <label class="rh-label">Observaciones</label>
+                                <textarea class="form-control rh-input" name="observaciones" rows="2"></textarea>
+                            </div>
+                        </div>
+                        <div class="rh-actions">
+                            <button class="rh-btn" type="submit"><i class="bi bi-plus-circle"></i> Registrar estado</button>
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <div class="alert alert-info" style="margin-bottom:14px;">Tu rol puede consultar el historial, pero no registrar seguimiento sobre muestras.</div>
+                }
+
+                @if (!historial.Any())
+                {
+                    <p class="rh-empty">Sin historial de seguimiento.</p>
+                }
+                else
+                {
+                    <div class="rh-table">
+                        <table class="table">
+                            <thead><tr><th>Fecha</th><th>Estado</th><th>Ubicacion</th><th>Observaciones</th></tr></thead>
+                            <tbody>
+                            @foreach (var h in historial)
+                            {
+                                <tr>
+                                    <td>@h.FechaRegistro.ToString("yyyy-MM-dd HH:mm")</td>
+                                    <td><span class="rh-pill">@h.Estado</span></td>
+                                    <td>@(h.Ubicacion ?? "-")</td>
+                                    <td>@(h.Observaciones ?? "-")</td>
+                                </tr>
+                            }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</div>

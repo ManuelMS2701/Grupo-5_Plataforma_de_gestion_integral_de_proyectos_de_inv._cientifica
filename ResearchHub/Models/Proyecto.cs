@@ -49,5 +49,7 @@ namespace ResearchHub.Models
         public ICollection<RepositorioDatos> Repositorios { get; set; } = new List<RepositorioDatos>();
         public ICollection<Colaborador> Colaboradores { get; set; } = new List<Colaborador>();
         public ICollection<Cronograma> Cronogramas { get; set; } = new List<Cronograma>();
+        public ICollection<TareaInvestigacion> Tareas { get; set; } = new List<TareaInvestigacion>();
+        public ICollection<BitacoraProyecto> Bitacora { get; set; } = new List<BitacoraProyecto>();
     }
 }

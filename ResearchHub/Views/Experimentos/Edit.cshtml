@@ -103,7 +103,9 @@
 
                 <div>
                     <label class="rh-label" asp-for="Estado"></label>
-                    <input class="form-control rh-input" asp-for="Estado" />
+                    <select class="form-select rh-input" asp-for="Estado" asp-items="@(ViewData["EstadosExperimento"] as SelectList)">
+                        <option value="">Selecciona un estado</option>
+                    </select>
                     <span class="text-danger" asp-validation-for="Estado"></span>
                 </div>
 

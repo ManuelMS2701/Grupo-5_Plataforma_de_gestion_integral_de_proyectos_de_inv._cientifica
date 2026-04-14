@@ -28,10 +28,81 @@ namespace ResearchHub.Data
         public DbSet<Colaborador> Colaboradores => Set<Colaborador>();
         public DbSet<Cronograma> Cronogramas => Set<Cronograma>();
         public DbSet<Validacion> Validaciones => Set<Validacion>();
+        public DbSet<UsuarioSistema> UsuariosSistema => Set<UsuarioSistema>();
+        public DbSet<RolSistema> RolesSistema => Set<RolSistema>();
+        public DbSet<TareaInvestigacion> TareasInvestigacion => Set<TareaInvestigacion>();
+        public DbSet<BitacoraProyecto> BitacoraProyecto => Set<BitacoraProyecto>();
+        public DbSet<SeguimientoMuestra> SeguimientosMuestra => Set<SeguimientoMuestra>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
+            modelBuilder.Entity<RolSistema>()
+                .HasIndex(r => r.Nombre)
+                .IsUnique();
+
+            modelBuilder.Entity<UsuarioSistema>()
+                .HasIndex(u => u.Email)
+                .IsUnique();
+
+            modelBuilder.Entity<UsuarioSistema>()
+                .HasIndex(u => u.NombreUsuario)
+                .IsUnique();
+
+            modelBuilder.Entity<UsuarioSistema>()
+                .HasOne(u => u.Rol)
+                .WithMany(r => r.Usuarios)
+                .HasForeignKey(u => u.IdRol)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<UsuarioSistema>()
+                .HasOne(u => u.Investigador)
+                .WithMany()
+                .HasForeignKey(u => u.IdInvestigador)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<TareaInvestigacion>()
+                .HasOne(t => t.Proyecto)
+                .WithMany(p => p.Tareas)
+                .HasForeignKey(t => t.IdProyecto)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<TareaInvestigacion>()
+                .HasOne(t => t.Experimento)
+                .WithMany(e => e.Tareas)
+                .HasForeignKey(t => t.IdExperimento)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<TareaInvestigacion>()
+                .HasOne(t => t.Responsable)
+                .WithMany()
+                .HasForeignKey(t => t.IdResponsable)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<BitacoraProyecto>()
+                .HasOne(b => b.Proyecto)
+                .WithMany(p => p.Bitacora)
+                .HasForeignKey(b => b.IdProyecto)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<BitacoraProyecto>()
+                .HasOne(b => b.Usuario)
+                .WithMany()
+                .HasForeignKey(b => b.IdUsuario)
+                .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<SeguimientoMuestra>()
+                .HasOne(s => s.Muestra)
+                .WithMany(m => m.Seguimientos)
+                .HasForeignKey(s => s.IdMuestra)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<SeguimientoMuestra>()
+                .HasOne(s => s.Usuario)
+                .WithMany()
+                .HasForeignKey(s => s.IdUsuario)
+                .OnDelete(DeleteBehavior.SetNull);
 
             modelBuilder.Entity<Proyecto>()
                 .HasOne(p => p.InvestigadorPrincipal)

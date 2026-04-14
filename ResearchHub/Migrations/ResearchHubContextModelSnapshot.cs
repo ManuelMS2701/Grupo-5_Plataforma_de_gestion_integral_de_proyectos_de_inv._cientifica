@@ -258,6 +258,46 @@ namespace ResearchHub.Migrations
                     b.ToTable("AspNetUsers", (string)null);
                 });
 
+            modelBuilder.Entity("ResearchHub.Models.BitacoraProyecto", b =>
+                {
+                    b.Property<int>("IdBitacora")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdBitacora"));
+
+                    b.Property<string>("Categoria")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("Contenido")
+                        .IsRequired()
+                        .HasMaxLength(4000)
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<DateTime>("FechaRegistro")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("IdProyecto")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("IdUsuario")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.HasKey("IdBitacora");
+
+                    b.HasIndex("IdProyecto");
+
+                    b.HasIndex("IdUsuario");
+
+                    b.ToTable("BitacoraProyecto");
+                });
+
             modelBuilder.Entity("ResearchHub.Models.Colaborador", b =>
                 {
                     b.Property<int>("IdColaborador")
@@ -836,6 +876,73 @@ namespace ResearchHub.Migrations
                     b.ToTable("Resultados");
                 });
 
+            modelBuilder.Entity("ResearchHub.Models.RolSistema", b =>
+                {
+                    b.Property<int>("IdRol")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdRol"));
+
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Descripcion")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Nombre")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("IdRol");
+
+                    b.HasIndex("Nombre")
+                        .IsUnique();
+
+                    b.ToTable("RolesSistema");
+                });
+
+            modelBuilder.Entity("ResearchHub.Models.SeguimientoMuestra", b =>
+                {
+                    b.Property<int>("IdSeguimiento")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdSeguimiento"));
+
+                    b.Property<string>("Estado")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime>("FechaRegistro")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("IdMuestra")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("IdUsuario")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Observaciones")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("Ubicacion")
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("IdSeguimiento");
+
+                    b.HasIndex("IdMuestra");
+
+                    b.HasIndex("IdUsuario");
+
+                    b.ToTable("SeguimientosMuestra");
+                });
+
             modelBuilder.Entity("ResearchHub.Models.SublineaInvestigacion", b =>
                 {
                     b.Property<int>("IdSublinea")
@@ -864,6 +971,124 @@ namespace ResearchHub.Migrations
                     b.HasIndex("IdLinea");
 
                     b.ToTable("SublineasInvestigacion");
+                });
+
+            modelBuilder.Entity("ResearchHub.Models.TareaInvestigacion", b =>
+                {
+                    b.Property<int>("IdTarea")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdTarea"));
+
+                    b.Property<string>("Descripcion")
+                        .HasMaxLength(2000)
+                        .HasColumnType("nvarchar(2000)");
+
+                    b.Property<string>("Estado")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<DateTime?>("FechaCierre")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("FechaCreacion")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("FechaLimite")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("IdExperimento")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdProyecto")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("IdResponsable")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Prioridad")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Titulo")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.HasKey("IdTarea");
+
+                    b.HasIndex("IdExperimento");
+
+                    b.HasIndex("IdProyecto");
+
+                    b.HasIndex("IdResponsable");
+
+                    b.ToTable("TareasInvestigacion");
+                });
+
+            modelBuilder.Entity("ResearchHub.Models.UsuarioSistema", b =>
+                {
+                    b.Property<int>("IdUsuario")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("IdUsuario"));
+
+                    b.Property<bool>("Activo")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("BloqueadoHasta")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("nvarchar(200)");
+
+                    b.Property<DateTime>("FechaRegistro")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int?>("IdInvestigador")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IdRol")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IntentosFallidos")
+                        .HasColumnType("int");
+
+                    b.Property<string>("NombreCompleto")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("NombreUsuario")
+                        .IsRequired()
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.Property<DateTime?>("UltimoAcceso")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("IdUsuario");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("IdInvestigador");
+
+                    b.HasIndex("IdRol");
+
+                    b.HasIndex("NombreUsuario")
+                        .IsUnique();
+
+                    b.ToTable("UsuariosSistema");
                 });
 
             modelBuilder.Entity("ResearchHub.Models.Validacion", b =>
@@ -997,6 +1222,24 @@ namespace ResearchHub.Migrations
                         .IsRequired();
 
                     b.Navigation("Resultado");
+                });
+
+            modelBuilder.Entity("ResearchHub.Models.BitacoraProyecto", b =>
+                {
+                    b.HasOne("ResearchHub.Models.Proyecto", "Proyecto")
+                        .WithMany("Bitacora")
+                        .HasForeignKey("IdProyecto")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ResearchHub.Models.UsuarioSistema", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("IdUsuario")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Proyecto");
+
+                    b.Navigation("Usuario");
                 });
 
             modelBuilder.Entity("ResearchHub.Models.Colaborador", b =>
@@ -1163,6 +1406,24 @@ namespace ResearchHub.Migrations
                     b.Navigation("Variable");
                 });
 
+            modelBuilder.Entity("ResearchHub.Models.SeguimientoMuestra", b =>
+                {
+                    b.HasOne("ResearchHub.Models.Muestra", "Muestra")
+                        .WithMany("Seguimientos")
+                        .HasForeignKey("IdMuestra")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("ResearchHub.Models.UsuarioSistema", "Usuario")
+                        .WithMany()
+                        .HasForeignKey("IdUsuario")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Muestra");
+
+                    b.Navigation("Usuario");
+                });
+
             modelBuilder.Entity("ResearchHub.Models.SublineaInvestigacion", b =>
                 {
                     b.HasOne("ResearchHub.Models.LineaInvestigacion", "LineaInvestigacion")
@@ -1172,6 +1433,49 @@ namespace ResearchHub.Migrations
                         .IsRequired();
 
                     b.Navigation("LineaInvestigacion");
+                });
+
+            modelBuilder.Entity("ResearchHub.Models.TareaInvestigacion", b =>
+                {
+                    b.HasOne("ResearchHub.Models.Experimento", "Experimento")
+                        .WithMany("Tareas")
+                        .HasForeignKey("IdExperimento")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("ResearchHub.Models.Proyecto", "Proyecto")
+                        .WithMany("Tareas")
+                        .HasForeignKey("IdProyecto")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("ResearchHub.Models.Investigador", "Responsable")
+                        .WithMany()
+                        .HasForeignKey("IdResponsable")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.Navigation("Experimento");
+
+                    b.Navigation("Proyecto");
+
+                    b.Navigation("Responsable");
+                });
+
+            modelBuilder.Entity("ResearchHub.Models.UsuarioSistema", b =>
+                {
+                    b.HasOne("ResearchHub.Models.Investigador", "Investigador")
+                        .WithMany()
+                        .HasForeignKey("IdInvestigador")
+                        .OnDelete(DeleteBehavior.SetNull);
+
+                    b.HasOne("ResearchHub.Models.RolSistema", "Rol")
+                        .WithMany("Usuarios")
+                        .HasForeignKey("IdRol")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Investigador");
+
+                    b.Navigation("Rol");
                 });
 
             modelBuilder.Entity("ResearchHub.Models.Validacion", b =>
@@ -1198,6 +1502,8 @@ namespace ResearchHub.Migrations
             modelBuilder.Entity("ResearchHub.Models.Experimento", b =>
                 {
                     b.Navigation("Resultados");
+
+                    b.Navigation("Tareas");
                 });
 
             modelBuilder.Entity("ResearchHub.Models.Institucion", b =>
@@ -1226,6 +1532,11 @@ namespace ResearchHub.Migrations
                     b.Navigation("Sublineas");
                 });
 
+            modelBuilder.Entity("ResearchHub.Models.Muestra", b =>
+                {
+                    b.Navigation("Seguimientos");
+                });
+
             modelBuilder.Entity("ResearchHub.Models.Protocolo", b =>
                 {
                     b.Navigation("Experimentos");
@@ -1233,6 +1544,8 @@ namespace ResearchHub.Migrations
 
             modelBuilder.Entity("ResearchHub.Models.Proyecto", b =>
                 {
+                    b.Navigation("Bitacora");
+
                     b.Navigation("Colaboradores");
 
                     b.Navigation("Cronogramas");
@@ -1244,11 +1557,18 @@ namespace ResearchHub.Migrations
                     b.Navigation("Publicaciones");
 
                     b.Navigation("Repositorios");
+
+                    b.Navigation("Tareas");
                 });
 
             modelBuilder.Entity("ResearchHub.Models.Resultado", b =>
                 {
                     b.Navigation("Analisis");
+                });
+
+            modelBuilder.Entity("ResearchHub.Models.RolSistema", b =>
+                {
+                    b.Navigation("Usuarios");
                 });
 
             modelBuilder.Entity("ResearchHub.Models.SublineaInvestigacion", b =>

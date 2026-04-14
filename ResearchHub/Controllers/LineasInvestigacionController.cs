@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using ResearchHub.Data;
@@ -16,16 +16,23 @@ namespace ResearchHub.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
         {
-            var lineas = await _context.LineasInvestigacion
+            page = Math.Max(1, page);
+            pageSize = Math.Clamp(pageSize, 5, 50);
+            var query = _context.LineasInvestigacion
                 .Include(l => l.Sublineas)
                 .AsNoTracking()
-                .OrderBy(l => l.Nombre)
-                .ToListAsync();
-
+                .OrderBy(l => l.Nombre);
+            var totalItems = await query.CountAsync();
+            var lineas = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            ViewBag.Page = page;
+            ViewBag.PageSize = pageSize;
+            ViewBag.TotalItems = totalItems;
+            ViewBag.TotalPages = Math.Max(1, (int)Math.Ceiling(totalItems / (double)pageSize));
             return View(lineas);
         }
+
 
         public async Task<IActionResult> Details(int? id)
         {

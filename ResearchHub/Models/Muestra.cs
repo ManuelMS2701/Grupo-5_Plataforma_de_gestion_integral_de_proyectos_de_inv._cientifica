@@ -29,5 +29,6 @@ namespace ResearchHub.Models
         public int IdProyecto { get; set; }
 
         public Proyecto? Proyecto { get; set; }
+        public ICollection<SeguimientoMuestra> Seguimientos { get; set; } = new List<SeguimientoMuestra>();
     }
 }

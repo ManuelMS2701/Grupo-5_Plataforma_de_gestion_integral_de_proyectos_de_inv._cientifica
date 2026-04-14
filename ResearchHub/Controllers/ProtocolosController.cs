@@ -16,15 +16,22 @@ namespace ResearchHub.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
         {
-            var protocolos = await _context.Protocolos
+            page = Math.Max(1, page);
+            pageSize = Math.Clamp(pageSize, 5, 50);
+            var query = _context.Protocolos
                 .AsNoTracking()
-                .OrderBy(p => p.Nombre)
-                .ToListAsync();
-
+                .OrderBy(p => p.Nombre);
+            var totalItems = await query.CountAsync();
+            var protocolos = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            ViewBag.Page = page;
+            ViewBag.PageSize = pageSize;
+            ViewBag.TotalItems = totalItems;
+            ViewBag.TotalPages = Math.Max(1, (int)Math.Ceiling(totalItems / (double)pageSize));
             return View(protocolos);
         }
+
 
         public async Task<IActionResult> Details(int? id)
         {

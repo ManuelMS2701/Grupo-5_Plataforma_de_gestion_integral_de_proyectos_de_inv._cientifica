@@ -1,0 +1,70 @@
+@using Microsoft.AspNetCore.Routing
+@{
+    if (ViewBag.TotalItems == null)
+    {
+        return;
+    }
+
+    var currentPage = (int?)ViewBag.Page ?? 1;
+    var totalPages = (int?)ViewBag.TotalPages ?? 1;
+    var pageSize = (int?)ViewBag.PageSize ?? 10;
+    var totalItems = (int?)ViewBag.TotalItems ?? 0;
+
+    var hasPrev = currentPage > 1;
+    var hasNext = currentPage < totalPages;
+    var fromItem = totalItems == 0 ? 0 : ((currentPage - 1) * pageSize) + 1;
+    var toItem = Math.Min(currentPage * pageSize, totalItems);
+
+    string BuildPageUrl(int targetPage)
+    {
+        var values = new RouteValueDictionary();
+        foreach (var kv in Context.Request.Query)
+        {
+            if (string.Equals(kv.Key, "page", StringComparison.OrdinalIgnoreCase) ||
+                string.Equals(kv.Key, "pageSize", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            values[kv.Key] = kv.Value.ToString();
+        }
+
+        values["page"] = targetPage;
+        values["pageSize"] = pageSize;
+        return Url.Action(null, values) ?? "#";
+    }
+}
+
+<div class="rh-meta">Mostrando @fromItem - @toItem de @totalItems registros</div>
+
+<div class="rh-pager">
+    <div>Pagina @currentPage de @totalPages</div>
+    <div class="rh-page-links">
+        <form method="get" style="display:inline-block; margin-right: 8px;">
+            @foreach (var kv in Context.Request.Query)
+            {
+                if (string.Equals(kv.Key, "page", StringComparison.OrdinalIgnoreCase) ||
+                    string.Equals(kv.Key, "pageSize", StringComparison.OrdinalIgnoreCase))
+                {
+                    continue;
+                }
+                <input type="hidden" name="@kv.Key" value="@kv.Value" />
+            }
+            <input type="hidden" name="page" value="1" />
+            <select class="form-select" name="pageSize" onchange="this.form.submit()">
+                <option value="10" selected="@(pageSize == 10)">10 / pagina</option>
+                <option value="20" selected="@(pageSize == 20)">20 / pagina</option>
+                <option value="50" selected="@(pageSize == 50)">50 / pagina</option>
+            </select>
+        </form>
+
+        @if (hasPrev)
+        {
+            <a class="rh-page-link" href="@BuildPageUrl(currentPage - 1)">Anterior</a>
+        }
+        @if (hasNext)
+        {
+            <a class="rh-page-link" href="@BuildPageUrl(currentPage + 1)">Siguiente</a>
+        }
+    </div>
+</div>

@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ResearchHub.Models.Institucion>
+@model IEnumerable<ResearchHub.Models.Institucion>
 
 @{
     ViewData["Title"] = "Instituciones";
@@ -91,17 +91,15 @@
 <div class="rh-list-wrap">
     <div class="rh-list-header">
         <h1 class="rh-list-title">Instituciones</h1>
-        <a class="rh-btn" asp-controller="Instituciones" asp-action="Create">Nueva institución</a>
+        <a class="rh-btn" asp-controller="Instituciones" asp-action="Create">Nueva instituci�n</a>
     </div>
 
     <div class="rh-table">
-        <table class="table">
+        <table class="table rh-table-fixed">
             <thead>
                 <tr>
                     <th>Nombre</th>
-                    <th>País</th>
-                    <th>Ciudad</th>
-                    <th>Teléfono</th>
+                    <th>Tel�fono</th>
                     <th>Email</th>
                     <th></th>
                 </tr>
@@ -110,11 +108,9 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@item.Nombre</td>
-                    <td>@item.Pais</td>
-                    <td>@item.Ciudad</td>
-                    <td>@item.Telefono</td>
-                    <td>@item.Email</td>
+                    <td class="rh-cell-clip" title="@item.Nombre">@item.Nombre</td>
+                    <td class="rh-cell-clip" title="@item.Telefono">@item.Telefono</td>
+                    <td class="rh-cell-clip" title="@item.Email">@item.Email</td>
                     <td class="rh-actions">
                         <a asp-action="Edit" asp-route-id="@item.IdInstitucion">Editar</a>
                         <a asp-action="Details" asp-route-id="@item.IdInstitucion">Detalles</a>
@@ -126,3 +122,5 @@
         </table>
     </div>
 </div>
+
+@await Html.PartialAsync("_SimplePager")

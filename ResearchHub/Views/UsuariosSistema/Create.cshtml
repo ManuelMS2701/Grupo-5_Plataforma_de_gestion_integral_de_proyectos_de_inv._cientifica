@@ -1,0 +1,60 @@
+@model ResearchHub.Models.UsuarioSistemaFormViewModel
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@{
+    ViewData["Title"] = "Nuevo usuario";
+}
+
+<div class="rh-form-wrap">
+    <h1 class="rh-form-title"><i class="bi bi-person-plus"></i> Crear usuario</h1>
+    <p class="rh-form-sub">Crea una cuenta manualmente, con rol y vínculo opcional a un investigador.</p>
+
+    <div class="rh-card">
+        <form asp-action="Create" method="post">
+            @Html.AntiForgeryToken()
+            <div class="rh-grid">
+                <div>
+                    <label class="rh-label" asp-for="NombreCompleto"></label>
+                    <input class="form-control rh-input" asp-for="NombreCompleto" />
+                    <span class="text-danger" asp-validation-for="NombreCompleto"></span>
+                </div>
+                <div>
+                    <label class="rh-label" asp-for="NombreUsuario"></label>
+                    <input class="form-control rh-input" asp-for="NombreUsuario" />
+                    <span class="text-danger" asp-validation-for="NombreUsuario"></span>
+                </div>
+                <div>
+                    <label class="rh-label" asp-for="Email"></label>
+                    <input class="form-control rh-input" asp-for="Email" />
+                    <span class="text-danger" asp-validation-for="Email"></span>
+                </div>
+                <div>
+                    <label class="rh-label" asp-for="Password"></label>
+                    <input class="form-control rh-input" asp-for="Password" />
+                    <span class="text-danger" asp-validation-for="Password"></span>
+                </div>
+                <div>
+                    <label class="rh-label" asp-for="IdRol"></label>
+                    <select class="form-select rh-input" asp-for="IdRol" asp-items="@(ViewData["Roles"] as SelectList)"></select>
+                </div>
+                <div>
+                    <label class="rh-label" asp-for="IdInvestigador"></label>
+                    <select class="form-select rh-input" asp-for="IdInvestigador" asp-items="@(ViewData["Investigadores"] as SelectList)">
+                        <option value="">Sin vínculo</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="rh-label" asp-for="Activo"></label>
+                    <select class="form-select rh-input" asp-for="Activo">
+                        <option value="true">Activo</option>
+                        <option value="false">Inactivo</option>
+                    </select>
+                </div>
+            </div>
+            <div class="rh-actions">
+                <button class="rh-btn" type="submit"><i class="bi bi-floppy"></i> Guardar</button>
+                <a class="rh-btn rh-btn-secondary" asp-action="Index">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>

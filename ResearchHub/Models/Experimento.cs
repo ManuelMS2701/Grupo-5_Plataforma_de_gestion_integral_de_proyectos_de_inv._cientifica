@@ -35,5 +35,6 @@ namespace ResearchHub.Models
         public Laboratorio? Laboratorio { get; set; }
 
         public ICollection<Resultado> Resultados { get; set; } = new List<Resultado>();
+        public ICollection<TareaInvestigacion> Tareas { get; set; } = new List<TareaInvestigacion>();
     }
 }

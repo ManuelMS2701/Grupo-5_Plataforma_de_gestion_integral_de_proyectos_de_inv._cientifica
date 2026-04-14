@@ -1,0 +1,32 @@
+@model ResearchHub.Models.UsuarioSistema
+
+@{
+    ViewData["Title"] = "Eliminar usuario";
+}
+
+<div class="rh-delete-wrap">
+    <h1 class="rh-delete-title"><i class="bi bi-person-dash"></i> Eliminar usuario</h1>
+    <p class="rh-warning">Esta acción retira el acceso de la cuenta seleccionada.</p>
+
+    <div class="rh-card">
+        <div class="rh-field">
+            <span class="rh-field-label">Nombre</span>
+            <span class="rh-field-value">@Model.NombreCompleto</span>
+        </div>
+        <div class="rh-field">
+            <span class="rh-field-label">Correo</span>
+            <span class="rh-field-value">@Model.Email</span>
+        </div>
+        <div class="rh-field">
+            <span class="rh-field-label">Rol</span>
+            <span class="rh-field-value">@Model.Rol?.Nombre</span>
+        </div>
+
+        <form asp-action="Delete" method="post" class="rh-actions">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="IdUsuario" />
+            <button class="rh-btn rh-btn-danger" type="submit"><i class="bi bi-trash3"></i> Eliminar</button>
+            <a class="rh-btn rh-btn-secondary" asp-action="Index">Cancelar</a>
+        </form>
+    </div>
+</div>

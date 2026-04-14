@@ -17,18 +17,25 @@ namespace ResearchHub.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
         {
-            var experimentos = await _context.Experimentos
+            page = Math.Max(1, page);
+            pageSize = Math.Clamp(pageSize, 5, 50);
+            var query = _context.Experimentos
                 .Include(e => e.Proyecto)
                 .Include(e => e.Protocolo)
                 .Include(e => e.Laboratorio)
                 .AsNoTracking()
-                .OrderByDescending(e => e.FechaInicio)
-                .ToListAsync();
-
+                .OrderByDescending(e => e.FechaInicio);
+            var totalItems = await query.CountAsync();
+            var experimentos = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            ViewBag.Page = page;
+            ViewBag.PageSize = pageSize;
+            ViewBag.TotalItems = totalItems;
+            ViewBag.TotalPages = Math.Max(1, (int)Math.Ceiling(totalItems / (double)pageSize));
             return View(experimentos);
         }
+
 
         public async Task<IActionResult> Details(int? id)
         {
@@ -60,7 +67,7 @@ namespace ResearchHub.Controllers
 
             if (!ModelState.IsValid)
             {
-                await CargarCombosAsync();
+                await CargarCombosAsync(experimento.Estado);
                 return View(experimento);
             }
 
@@ -77,7 +84,7 @@ namespace ResearchHub.Controllers
             var experimento = await _context.Experimentos.FindAsync(id.Value);
             if (experimento == null) return NotFound();
 
-            await CargarCombosAsync();
+            await CargarCombosAsync(experimento.Estado);
             return View(experimento);
         }
 
@@ -91,7 +98,7 @@ namespace ResearchHub.Controllers
 
             if (!ModelState.IsValid)
             {
-                await CargarCombosAsync();
+                await CargarCombosAsync(experimento.Estado);
                 return View(experimento);
             }
 
@@ -139,7 +146,7 @@ namespace ResearchHub.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task CargarCombosAsync()
+        private async Task CargarCombosAsync(string? estadoSeleccionado = null)
         {
             ViewData["Proyectos"] = new SelectList(
                 await _context.Proyectos.AsNoTracking().OrderBy(p => p.Titulo).ToListAsync(),
@@ -155,6 +162,18 @@ namespace ResearchHub.Controllers
                 await _context.Laboratorios.AsNoTracking().OrderBy(l => l.Nombre).ToListAsync(),
                 "IdLaboratorio",
                 "Nombre");
+
+            ViewData["EstadosExperimento"] = new SelectList(
+                new[]
+                {
+                    new { Value = "Planificado", Text = "Planificado" },
+                    new { Value = "En ejecucion", Text = "En ejecucion" },
+                    new { Value = "Completado", Text = "Completado" },
+                    new { Value = "Cancelado", Text = "Cancelado" }
+                },
+                "Value",
+                "Text",
+                estadoSeleccionado);
         }
 
         private void AgregarErrorSiFechasInvalidas(Experimento experimento)

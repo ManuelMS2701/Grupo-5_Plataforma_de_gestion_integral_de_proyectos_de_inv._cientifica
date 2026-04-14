@@ -1,0 +1,57 @@
+@model IEnumerable<ResearchHub.Models.UsuarioSistema>
+
+@{
+    ViewData["Title"] = "Usuarios del sistema";
+}
+
+<div class="rh-list-wrap">
+    <div class="rh-list-header">
+        <div>
+            <h1 class="rh-list-title"><i class="bi bi-people"></i> Usuarios del sistema</h1>
+            <p class="rh-meta">Control manual de cuentas, roles, vínculo con investigadores y estado de acceso.</p>
+        </div>
+        <a class="rh-btn" asp-action="Create"><i class="bi bi-person-plus"></i> Nuevo usuario</a>
+    </div>
+
+    <div class="rh-table">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Correo</th>
+                    <th>Rol</th>
+                    <th>Investigador</th>
+                    <th>Estado</th>
+                    <th>Último acceso</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <strong>@item.NombreCompleto</strong><br />
+                        <span class="rh-meta">@item.NombreUsuario</span>
+                    </td>
+                    <td>@item.Email</td>
+                    <td><span class="rh-pill">@item.Rol?.Nombre</span></td>
+                    <td>@(item.Investigador != null ? item.Investigador.Nombre + " " + item.Investigador.Apellido : "Sin vínculo")</td>
+                    <td><span class="rh-pill">@(item.Activo ? "Activo" : "Inactivo")</span></td>
+                    <td>@(item.UltimoAcceso?.ToString("yyyy-MM-dd HH:mm") ?? "Nunca")</td>
+                    <td class="rh-row-actions">
+                        <a asp-action="Edit" asp-route-id="@item.IdUsuario"><i class="bi bi-pencil-square"></i> Editar</a>
+                        <form asp-action="ToggleActivo" asp-route-id="@item.IdUsuario" method="post" class="d-inline">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="rh-inline-btn"><i class="bi bi-power"></i> @(item.Activo ? "Desactivar" : "Activar")</button>
+                        </form>
+                        <a asp-action="Delete" asp-route-id="@item.IdUsuario"><i class="bi bi-trash3"></i> Eliminar</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@await Html.PartialAsync("_SimplePager")

@@ -107,13 +107,11 @@
     </div>
 
     <div class="rh-table">
-        <table class="table">
+        <table class="table rh-table-fixed">
             <thead>
                 <tr>
                     <th>Titulo</th>
-                    <th>Estado</th>
                     <th>Proyecto</th>
-                    <th>Protocolo</th>
                     <th>Laboratorio</th>
                     <th>Inicio</th>
                     <th></th>
@@ -123,11 +121,9 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@item.Titulo</td>
-                    <td><span class="rh-pill">@item.Estado</span></td>
-                    <td>@item.Proyecto?.Titulo</td>
-                    <td>@item.Protocolo?.Nombre</td>
-                    <td>@item.Laboratorio?.Nombre</td>
+                    <td class="rh-cell-clip" title="@item.Titulo">@item.Titulo</td>
+                    <td class="rh-cell-clip" title="@item.Proyecto?.Titulo">@item.Proyecto?.Titulo</td>
+                    <td class="rh-cell-clip" title="@item.Laboratorio?.Nombre">@item.Laboratorio?.Nombre</td>
                     <td>@item.FechaInicio?.ToString("yyyy-MM-dd")</td>
                     <td class="rh-actions">
                         <a asp-action="Edit" asp-route-id="@item.IdExperimento">Editar</a>
@@ -140,3 +136,5 @@
         </table>
     </div>
 </div>
+
+@await Html.PartialAsync("_SimplePager")

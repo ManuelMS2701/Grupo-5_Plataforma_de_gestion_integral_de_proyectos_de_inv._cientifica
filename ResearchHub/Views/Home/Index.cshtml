@@ -1,239 +1,193 @@
-﻿@{
-    ViewData["Title"] = "ResearchHub";
+@model ResearchHub.Models.HomeDashboardViewModel
+@using ResearchHub.Models
+
+@{
+    ViewData["Title"] = "Inicio";
+    var isAdmin = User.IsInRole(Roles.Administrador);
 }
 
 <style>
-    .rh-wrap {
-        max-width: 1100px;
-        margin: 0 auto;
-        padding: 56px 20px 80px;
-        font-family: "Space Grotesk", system-ui, sans-serif;
-    }
+    .home-wrap { max-width: 1140px; margin: 0 auto; padding: 30px 20px 60px; }
+    .home-hero { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 18px; flex-wrap: wrap; }
+    .home-title { font-family: "Fraunces", serif; font-size: clamp(1.8rem, 3.2vw, 2.6rem); margin: 0 0 6px; }
+    .home-sub { color: #64748b; margin: 0; }
+    .home-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+    .home-kpis { margin-top: 12px; }
+    .home-grid { display: grid; grid-template-columns: 1.05fr 1fr 1fr; gap: 14px; margin-top: 16px; }
+    .home-card { background: #fff; border: 1px solid rgba(15, 23, 42, .08); border-radius: 16px; padding: 16px; box-shadow: 0 10px 24px rgba(15,23,42,.05); }
+    .home-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; margin-bottom: 10px; }
+    .home-head h3 { margin: 0; font-size: 1.02rem; font-family: "Fraunces", serif; }
+    .home-list { display: grid; gap: 8px; }
+    .home-item { background: #f8fbff; border: 1px solid rgba(37,99,235,.08); border-radius: 12px; padding: 10px 12px; }
+    .home-item strong { display: block; }
+    .home-item span { color: #64748b; font-size: .88rem; }
+    .home-empty { color: #64748b; font-size: .92rem; padding: 8px 0; }
+    .home-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+    .home-badge { font-size: .75rem; padding: 3px 8px; border-radius: 999px; background: #eef3ff; color: #2b5bb5; font-weight: 700; border: 1px solid rgba(43,91,181,.16); }
+    .home-activity-link { text-decoration: none; font-weight: 600; color: #1d4ed8; }
 
-    .rh-hero {
-        display: grid;
-        grid-template-columns: 1.1fr 0.9fr;
-        gap: 28px;
-        align-items: center;
-        margin-bottom: 36px;
-    }
-
-    .rh-title {
-        font-family: "Fraunces", serif;
-        font-size: clamp(2.3rem, 4vw, 3.6rem);
-        line-height: 1.05;
-        margin: 0 0 12px;
-        letter-spacing: -0.6px;
-    }
-
-    .rh-subtitle {
-        color: #64748b;
-        font-size: 1.05rem;
-        margin: 0 0 20px;
-        max-width: 56ch;
-    }
-
-    .rh-cta {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px;
-        background: linear-gradient(90deg, #5b8df6, #53c58a);
-        color: #fff;
-        padding: 12px 18px;
-        border-radius: 12px;
-        text-decoration: none;
-        font-weight: 600;
-        box-shadow: 0 10px 26px rgba(91, 141, 246, 0.22);
-    }
-
-    .rh-cta:hover {
-        color: #fff;
-        transform: translateY(-1px);
-        box-shadow: 0 14px 30px rgba(83, 197, 138, 0.22);
-    }
-
-    .rh-card {
-        background: #ffffff;
-        border: 1px solid rgba(15, 23, 42, 0.08);
-        border-radius: 16px;
-        padding: 20px;
-        box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
-    }
-
-    .rh-card-header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 16px;
-        margin-bottom: 16px;
-    }
-
-    .rh-chip {
-        background: #eef3ff;
-        color: #2b5bb5;
-        padding: 6px 12px;
-        border-radius: 999px;
-        font-weight: 600;
-        font-size: 0.85rem;
-        border: 1px solid rgba(43, 91, 181, 0.15);
-    }
-
-    .rh-stats {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 12px;
-        margin-top: 12px;
-    }
-
-    .rh-stat {
-        background: #f8fafc;
-        border-radius: 12px;
-        padding: 14px;
-        border: 1px dashed rgba(15, 23, 42, 0.1);
-    }
-
-    .rh-stat h4 {
-        margin: 0 0 6px;
-        font-size: 0.9rem;
-        color: #64748b;
-        font-weight: 500;
-    }
-
-    .rh-stat p {
-        margin: 0;
-        font-size: 1.3rem;
-        font-weight: 600;
-        color: #0f172a;
-    }
-
-    .rh-grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 14px;
-        margin-top: 18px;
-    }
-
-    .rh-pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 0.85rem;
-        background: #eef8ff;
-        color: #2b5bb5;
-        border: 1px solid rgba(43, 91, 181, 0.15);
-        padding: 6px 10px;
-        border-radius: 999px;
-        font-weight: 600;
-    }
-
-    .rh-section-title {
-        font-family: "Fraunces", serif;
-        margin: 30px 0 12px;
-        font-size: 1.7rem;
-    }
-
-    .rh-list {
-        display: grid;
-        gap: 12px;
-    }
-
-    .rh-item {
-        background: #ffffff;
-        border: 1px solid rgba(15, 23, 42, 0.08);
-        border-radius: 14px;
-        padding: 14px 16px;
-        display: grid;
-        gap: 6px;
-    }
-
-    .rh-item h5 {
-        margin: 0;
-        font-size: 1rem;
-    }
-
-    .rh-item p {
-        margin: 0;
-        color: #64748b;
-        font-size: 0.95rem;
-    }
-
-    .rh-footer-note {
-        margin-top: 30px;
-        color: #64748b;
-        font-size: 0.9rem;
-        text-align: center;
-    }
-
-    @@media (max-width: 900px) {
-        .rh-hero { grid-template-columns: 1fr; }
-        .rh-grid { grid-template-columns: 1fr; }
-        .rh-stats { grid-template-columns: 1fr; }
-        .rh-card-header { flex-direction: column; align-items: flex-start; }
-    }
+    @@media (max-width: 1060px) { .home-grid { grid-template-columns: 1fr; } }
 </style>
 
-<div class="rh-wrap">
-    <div class="rh-hero">
+<div class="home-wrap">
+    <div class="home-hero">
         <div>
-            <span class="rh-pill">ResearchHub · Plataforma de Investigación</span>
-            <h1 class="rh-title">Organiza proyectos, experimentos y resultados con claridad científica.</h1>
-            <p class="rh-subtitle">
-                Centraliza investigadores, protocolos y datos en un flujo único. Un tablero limpio para
-                controlar fases, validar análisis y publicar con trazabilidad.
-            </p>
-            <a class="rh-cta" href="/Proyectos">Explorar proyectos</a>
+            <h1 class="home-title">Panel de investigacion</h1>
+            <p class="home-sub">@Model.NombreUsuario � Rol: <span class="home-badge">@Model.Rol</span></p>
         </div>
-
-        <div class="rh-card">
-            <div class="rh-card-header">
-                <h3 class="rh-section-title" style="margin:0;">Resumen rápido</h3>
-                <span class="rh-chip">Estado general</span>
-            </div>
-            <div class="rh-stats">
-                <div class="rh-stat">
-                    <h4>Proyectos activos</h4>
-                    <p>12</p>
-                </div>
-                <div class="rh-stat">
-                    <h4>Experimentos</h4>
-                    <p>48</p>
-                </div>
-                <div class="rh-stat">
-                    <h4>Resultados</h4>
-                    <p>326</p>
-                </div>
-            </div>
-            <div class="rh-grid">
-                <div class="rh-item">
-                    <h5>Validaciones pendientes</h5>
-                    <p>Revisiones de análisis en espera.</p>
-                </div>
-                <div class="rh-item">
-                    <h5>Publicaciones</h5>
-                    <p>Seguimiento de envíos y DOI.</p>
-                </div>
-                <div class="rh-item">
-                    <h5>Repositorios</h5>
-                    <p>Datos abiertos y trazables.</p>
-                </div>
-            </div>
+        <div class="home-actions">
+            <a class="rh-btn" asp-controller="Proyectos" asp-action="Index"><i class="bi bi-kanban"></i> Proyectos</a>
+            <a class="rh-btn rh-btn-secondary" asp-controller="MiEspacio" asp-action="Index"><i class="bi bi-stars"></i> Mi espacio</a>
+            @if (isAdmin)
+            {
+                <a class="rh-btn rh-btn-secondary" asp-controller="Admin" asp-action="Index"><i class="bi bi-speedometer2"></i> Admin</a>
+            }
         </div>
     </div>
 
-    <h3 class="rh-section-title">Flujo de trabajo</h3>
-    <div class="rh-list">
-        <div class="rh-item">
-            <h5>1. Planificación</h5>
-            <p>Define cronogramas, asigna colaboradores y estructura la línea de investigación.</p>
+    <div class="home-kpis rh-kpi-grid">
+        <div class="rh-kpi-card">
+            <span class="rh-kpi-icon"><i class="bi bi-diagram-3"></i></span>
+            <div><div class="rh-kpi-value">@Model.TotalProyectos</div><div class="rh-kpi-label">Proyectos vinculados</div></div>
         </div>
-        <div class="rh-item">
-            <h5>2. Ejecución</h5>
-            <p>Controla experimentos, muestras, laboratorio y equipos asociados.</p>
+        <div class="rh-kpi-card">
+            <span class="rh-kpi-icon"><i class="bi bi-check2-circle"></i></span>
+            <div><div class="rh-kpi-value">@Model.ProyectosActivos</div><div class="rh-kpi-label">Proyectos activos</div></div>
         </div>
-        <div class="rh-item">
-            <h5>3. Resultados</h5>
-            <p>Registra variables, analiza datos y valida hallazgos con evidencia.</p>
+        <div class="rh-kpi-card">
+            <span class="rh-kpi-icon"><i class="bi bi-bezier2"></i></span>
+            <div><div class="rh-kpi-value">@Model.TotalExperimentos</div><div class="rh-kpi-label">Experimentos</div></div>
+        </div>
+        <div class="rh-kpi-card">
+            <span class="rh-kpi-icon"><i class="bi bi-clipboard-data"></i></span>
+            <div><div class="rh-kpi-value">@Model.TotalResultados</div><div class="rh-kpi-label">Resultados</div></div>
+        </div>
+        <div class="rh-kpi-card">
+            <span class="rh-kpi-icon"><i class="bi bi-list-check"></i></span>
+            <div><div class="rh-kpi-value">@Model.TotalTareasPendientes</div><div class="rh-kpi-label">Tareas pendientes</div></div>
         </div>
     </div>
 
+    <div class="home-grid">
+        <section class="home-card">
+            <div class="home-head">
+                <h3>Proyectos recientes</h3>
+                <a class="home-activity-link" asp-controller="Proyectos" asp-action="Index">Ver todos</a>
+            </div>
+            @if (!Model.ProyectosRecientes.Any())
+            {
+                <p class="home-empty">No hay proyectos vinculados para mostrar.</p>
+            }
+            else
+            {
+                <div class="home-list">
+                    @foreach (var item in Model.ProyectosRecientes)
+                    {
+                        <div class="home-item">
+                            <div class="home-row">
+                                <strong>@item.Titulo</strong>
+                                <span class="home-badge">@(item.Estado ?? "Sin estado")</span>
+                            </div>
+                            <span>@(item.Institucion ?? "Sin institucion")</span>
+                            <a class="home-activity-link" asp-controller="Proyectos" asp-action="Hub" asp-route-id="@item.IdProyecto">Abrir hub</a>
+                        </div>
+                    }
+                </div>
+            }
+        </section>
+
+        <section class="home-card">
+            <div class="home-head">
+                <h3>Tareas pendientes</h3>
+                <a class="home-activity-link" asp-controller="MiEspacio" asp-action="Tareas">Abrir</a>
+            </div>
+            @if (!Model.TareasPendientes.Any())
+            {
+                <p class="home-empty">No hay tareas pendientes.</p>
+            }
+            else
+            {
+                <div class="home-list">
+                    @foreach (var item in Model.TareasPendientes)
+                    {
+                        <div class="home-item">
+                            <div class="home-row">
+                                <strong>@item.Titulo</strong>
+                                <span class="home-badge">@(item.Estado ?? "Pendiente")</span>
+                            </div>
+                            <span>@(item.Proyecto ?? "Sin proyecto") � Limite: @(item.FechaLimite?.ToString("yyyy-MM-dd") ?? "Sin fecha")</span>
+                        </div>
+                    }
+                </div>
+            }
+        </section>
+
+        <section class="home-card">
+            <div class="home-head">
+                <h3>Proximos hitos</h3>
+                <a class="home-activity-link" asp-controller="MiEspacio" asp-action="Cronograma">Cronograma</a>
+            </div>
+            @if (!Model.HitosProximos.Any())
+            {
+                <p class="home-empty">No hay hitos pendientes.</p>
+            }
+            else
+            {
+                <div class="home-list">
+                    @foreach (var item in Model.HitosProximos)
+                    {
+                        <div class="home-item">
+                            <div class="home-row">
+                                <strong>@item.NombreFase</strong>
+                                <span class="home-badge">@(item.Estado ?? "Pendiente")</span>
+                            </div>
+                            <span>@(item.Proyecto ?? "Sin proyecto") � Fecha: @(item.FechaObjetivo?.ToString("yyyy-MM-dd") ?? "Sin fecha")</span>
+                        </div>
+                    }
+                </div>
+            }
+        </section>
+    </div>
+
+    <section class="home-card" style="margin-top:14px;">
+        <div class="home-head">
+            <h3>Actividad reciente</h3>
+            <a class="home-activity-link" asp-controller="Busqueda" asp-action="Index">Busqueda global</a>
+        </div>
+        @if (!Model.ActividadReciente.Any())
+        {
+            <p class="home-empty">Aun no hay actividad reciente para tus proyectos.</p>
+        }
+        else
+        {
+            <div class="rh-table">
+                <table class="table">
+                    <thead>
+                        <tr><th>Tipo</th><th>Titulo</th><th>Proyecto</th><th>Fecha</th><th></th></tr>
+                    </thead>
+                    <tbody>
+                    @foreach (var item in Model.ActividadReciente)
+                    {
+                        <tr>
+                            <td><span class="home-badge">@item.Tipo</span></td>
+                            <td>@item.Titulo</td>
+                            <td>@(item.Proyecto ?? "-")</td>
+                            <td>@item.Fecha.ToString("yyyy-MM-dd HH:mm")</td>
+                            <td>
+                                @if (item.Controller == "MiEspacio")
+                                {
+                                    <a class="home-activity-link" asp-controller="MiEspacio" asp-action="Bitacora">Ver</a>
+                                }
+                                else
+                                {
+                                    <a class="home-activity-link" asp-controller="@item.Controller" asp-action="Details" asp-route-id="@item.Id">Ver</a>
+                                }
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
 </div>

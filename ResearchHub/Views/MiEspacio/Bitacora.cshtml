@@ -1,0 +1,83 @@
+@model ResearchHub.Models.BitacoraPageViewModel
+
+@{
+    ViewData["Title"] = "Bitacora";
+    var puedeCrearBitacora = ViewData["PuedeCrearBitacora"] as bool? == true;
+}
+
+<div class="rh-list-wrap">
+    <div class="rh-list-header">
+        <div>
+            <h1 class="rh-list-title"><i class="bi bi-journal-bookmark"></i> Bitacora de proyecto</h1>
+            <p class="rh-meta">Registro de decisiones, incidencias y observaciones cientificas.</p>
+        </div>
+        <a class="rh-btn rh-btn-secondary" asp-action="Index">Volver a mi espacio</a>
+    </div>
+
+    @if (TempData["MiEspacioError"] != null)
+    {
+        <div class="alert alert-danger">@TempData["MiEspacioError"]</div>
+    }
+
+    @if (puedeCrearBitacora)
+    {
+        <div class="rh-card" style="margin-bottom:18px;">
+            <form asp-action="CrearBitacora" method="post">
+                @Html.AntiForgeryToken()
+                <div class="rh-grid" style="grid-template-columns:repeat(3,1fr);">
+                    <div>
+                        <label class="rh-label">Proyecto</label>
+                        <select class="form-select rh-input" name="idProyecto" required>
+                            @foreach (var proyecto in Model.Proyectos)
+                            {
+                                if (Model.ProyectoSeleccionado == proyecto.IdProyecto)
+                                {
+                                    <option value="@proyecto.IdProyecto" selected>@proyecto.Titulo</option>
+                                }
+                                else
+                                {
+                                    <option value="@proyecto.IdProyecto">@proyecto.Titulo</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div>
+                        <label class="rh-label">Categoria</label>
+                        <select class="form-select rh-input" name="categoria">
+                            <option>Avance</option>
+                            <option>Incidencia</option>
+                            <option>Decision</option>
+                            <option>Hallazgo</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="rh-label">Titulo</label>
+                        <input class="form-control rh-input" name="titulo" required />
+                    </div>
+                    <div class="rh-grid-full">
+                        <label class="rh-label">Contenido</label>
+                        <textarea class="form-control rh-input" name="contenido" rows="5" required></textarea>
+                    </div>
+                </div>
+                <div class="rh-actions">
+                    <button class="rh-btn" type="submit"><i class="bi bi-journal-plus"></i> Registrar entrada</button>
+                </div>
+            </form>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">Tu rol puede consultar la bitacora, pero no registrar nuevas entradas.</div>
+    }
+
+    <div class="rh-mini-list">
+        @foreach (var item in Model.Entradas)
+        {
+            <div class="rh-mini-item">
+                <strong>@item.Titulo</strong>
+                <span>@item.Proyecto?.Titulo · @(item.Categoria ?? "General") · @item.FechaRegistro.ToString("yyyy-MM-dd HH:mm")</span>
+                <span>@item.Contenido</span>
+            </div>
+        }
+    </div>
+</div>

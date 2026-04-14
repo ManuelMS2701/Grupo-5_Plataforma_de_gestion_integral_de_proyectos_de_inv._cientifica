@@ -1,0 +1,32 @@
+@model IEnumerable<ResearchHub.Models.Publicacion>
+
+@{
+    ViewData["Title"] = "Mis publicaciones";
+}
+
+<div class="rh-list-wrap">
+    <div class="rh-list-header">
+        <div>
+            <h1 class="rh-list-title"><i class="bi bi-journal-richtext"></i> Mis publicaciones</h1>
+            <p class="rh-meta">Seguimiento de articulos, reportes y salidas cientificas.</p>
+        </div>
+        <a class="rh-btn rh-btn-secondary" asp-action="Index">Volver a mi espacio</a>
+    </div>
+    <div class="rh-table">
+        <table class="table">
+            <thead><tr><th>Titulo</th><th>Proyecto</th><th>Revista</th><th>Fecha</th><th>DOI</th></tr></thead>
+            <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Titulo</td>
+                    <td>@item.Proyecto?.Titulo</td>
+                    <td>@item.Revista</td>
+                    <td>@item.FechaPublicacion?.ToString("yyyy-MM-dd")</td>
+                    <td>@item.DOI</td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

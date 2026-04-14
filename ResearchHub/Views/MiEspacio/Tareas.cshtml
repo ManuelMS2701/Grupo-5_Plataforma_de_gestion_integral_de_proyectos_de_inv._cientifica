@@ -1,0 +1,126 @@
+@model ResearchHub.Models.MisTareasViewModel
+@using ResearchHub.Models
+
+@{
+    ViewData["Title"] = "Mis tareas";
+    var puedeGestionarTareas = ViewData["PuedeGestionarTareas"] as bool? == true;
+}
+
+<div class="rh-list-wrap">
+    <div class="rh-list-header">
+        <div>
+            <h1 class="rh-list-title"><i class="bi bi-list-check"></i> Mis tareas</h1>
+            <p class="rh-meta">Gestion operativa de tareas por proyecto y experimento.</p>
+        </div>
+        <a class="rh-btn rh-btn-secondary" asp-action="Index">Volver a mi espacio</a>
+    </div>
+
+    @if (TempData["MiEspacioError"] != null)
+    {
+        <div class="alert alert-danger">@TempData["MiEspacioError"]</div>
+    }
+
+    @if (puedeGestionarTareas)
+    {
+        <div class="rh-card" style="margin-bottom:18px;">
+            <form asp-action="CrearTarea" method="post">
+                @Html.AntiForgeryToken()
+                <div class="rh-grid" style="grid-template-columns:repeat(3,1fr);">
+                    <div>
+                        <label class="rh-label">Proyecto</label>
+                        <select class="form-select rh-input" name="idProyecto" required>
+                            @foreach (var proyecto in Model.Proyectos)
+                            {
+                                if (Model.ProyectoSeleccionado == proyecto.IdProyecto)
+                                {
+                                    <option value="@proyecto.IdProyecto" selected>@proyecto.Titulo</option>
+                                }
+                                else
+                                {
+                                    <option value="@proyecto.IdProyecto">@proyecto.Titulo</option>
+                                }
+                            }
+                        </select>
+                    </div>
+                    <div>
+                        <label class="rh-label">Experimento</label>
+                        <select class="form-select rh-input" name="idExperimento">
+                            <option value="">Sin experimento</option>
+                            @foreach (var experimento in Model.Experimentos)
+                            {
+                                <option value="@experimento.IdExperimento">@experimento.Titulo</option>
+                            }
+                        </select>
+                    </div>
+                    <div>
+                        <label class="rh-label">Prioridad</label>
+                        <select class="form-select rh-input" name="prioridad">
+                            <option>Alta</option>
+                            <option selected>Media</option>
+                            <option>Baja</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="rh-label">Titulo</label>
+                        <input class="form-control rh-input" name="titulo" required />
+                    </div>
+                    <div>
+                        <label class="rh-label">Fecha limite</label>
+                        <input class="form-control rh-input" name="fechaLimite" type="date" />
+                    </div>
+                    <div class="rh-grid-full">
+                        <label class="rh-label">Descripcion</label>
+                        <textarea class="form-control rh-input" name="descripcion" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="rh-actions">
+                    <button class="rh-btn" type="submit"><i class="bi bi-plus-circle"></i> Crear tarea</button>
+                </div>
+            </form>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-info">Tu rol puede consultar tareas, pero no crear ni cambiar su estado.</div>
+    }
+
+    <div class="rh-table">
+        <table class="table">
+            <thead><tr><th>Titulo</th><th>Proyecto</th><th>Experimento</th><th>Prioridad</th><th>Estado</th><th>Limite</th><th></th></tr></thead>
+            <tbody>
+            @foreach (var item in Model.Tareas)
+            {
+                <tr>
+                    <td>@item.Titulo</td>
+                    <td>@item.Proyecto?.Titulo</td>
+                    <td>@(item.Experimento?.Titulo ?? "-")</td>
+                    <td><span class="rh-pill">@item.Prioridad</span></td>
+                    <td><span class="rh-pill">@item.Estado</span></td>
+                    <td>@(item.FechaLimite?.ToString("yyyy-MM-dd") ?? "-")</td>
+                    <td class="rh-row-actions">
+                        @if (puedeGestionarTareas)
+                        {
+                            <form asp-action="CambiarEstadoTarea" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="idTarea" value="@item.IdTarea" />
+                                <input type="hidden" name="estado" value="En progreso" />
+                                <button type="submit" class="rh-inline-btn"><i class="bi bi-play-circle"></i> En progreso</button>
+                            </form>
+                            <form asp-action="CambiarEstadoTarea" method="post" class="d-inline">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="idTarea" value="@item.IdTarea" />
+                                <input type="hidden" name="estado" value="Completada" />
+                                <button type="submit" class="rh-inline-btn"><i class="bi bi-check2-circle"></i> Completar</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <span class="rh-meta">Solo lectura</span>
+                        }
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>

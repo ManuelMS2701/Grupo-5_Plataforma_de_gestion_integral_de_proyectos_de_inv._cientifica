@@ -1,0 +1,51 @@
+@model IEnumerable<ResearchHub.Models.RolSistema>
+
+@{
+    ViewData["Title"] = "Roles del sistema";
+}
+
+<div class="rh-list-wrap">
+    <div class="rh-list-header">
+        <div>
+            <h1 class="rh-list-title"><i class="bi bi-shield-lock"></i> Roles del sistema</h1>
+            <p class="rh-meta">Gestiona permisos base para administradores e investigadores.</p>
+        </div>
+        <a class="rh-btn" asp-action="Create"><i class="bi bi-plus-circle"></i> Nuevo rol</a>
+    </div>
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Error"]</div>
+    }
+
+    <div class="rh-table">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Rol</th>
+                    <th>Descripción</th>
+                    <th>Activo</th>
+                    <th>Usuarios</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.Nombre</td>
+                    <td>@item.Descripcion</td>
+                    <td><span class="rh-pill">@(item.Activo ? "Sí" : "No")</span></td>
+                    <td>@item.Usuarios.Count</td>
+                    <td class="rh-row-actions">
+                        <a asp-action="Edit" asp-route-id="@item.IdRol"><i class="bi bi-pencil-square"></i> Editar</a>
+                        <a asp-action="Delete" asp-route-id="@item.IdRol"><i class="bi bi-trash3"></i> Eliminar</a>
+                    </td>
+                </tr>
+            }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@await Html.PartialAsync("_SimplePager")

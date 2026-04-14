@@ -1,0 +1,205 @@
+@model ResearchHub.Models.MiEspacioViewModel
+@using ResearchHub.Models
+
+@{
+    ViewData["Title"] = "Mi espacio";
+    var puedeProponerProyecto = User.IsInRole(Roles.Administrador) || User.IsInRole(Roles.Investigador) || User.IsInRole(Roles.InvestigadorPrincipal);
+    var puedeGestionarTareas = User.IsInRole(Roles.Administrador) || User.IsInRole(Roles.Investigador) || User.IsInRole(Roles.InvestigadorPrincipal) || User.IsInRole(Roles.TecnicoLaboratorio) || User.IsInRole(Roles.AnalistaDatos);
+    var puedeBitacora = User.IsInRole(Roles.Administrador) || User.IsInRole(Roles.Investigador) || User.IsInRole(Roles.InvestigadorPrincipal) || User.IsInRole(Roles.TecnicoLaboratorio) || User.IsInRole(Roles.AnalistaDatos) || User.IsInRole(Roles.RevisorCientifico);
+    var puedeSeguimientoMuestras = User.IsInRole(Roles.Administrador) || User.IsInRole(Roles.Investigador) || User.IsInRole(Roles.InvestigadorPrincipal) || User.IsInRole(Roles.TecnicoLaboratorio);
+}
+
+<div class="rh-list-wrap">
+    <div class="rh-list-header">
+        <div>
+            <h1 class="rh-list-title"><i class="bi bi-stars"></i> Mi espacio de investigacion</h1>
+            <p class="rh-meta">@Model.NombreUsuario · Rol: <span class="rh-pill">@Model.Rol</span></p>
+        </div>
+        <div class="rh-actions" style="margin-top:0;">
+            <a class="rh-btn" asp-controller="Proyectos" asp-action="Index" asp-route-misProyectos="true"><i class="bi bi-kanban"></i> Mis proyectos</a>
+            @if (puedeProponerProyecto)
+            {
+                <a class="rh-btn rh-btn-secondary" asp-controller="Proyectos" asp-action="CreatePropio"><i class="bi bi-plus-circle"></i> Proponer proyecto</a>
+            }
+        </div>
+    </div>
+
+    <div class="rh-kpi-grid">
+        <div class="rh-kpi-card">
+            <span class="rh-kpi-icon"><i class="bi bi-diagram-3"></i></span>
+            <div><div class="rh-kpi-value">@Model.TotalProyectos</div><div class="rh-kpi-label">Proyectos vinculados</div></div>
+        </div>
+        <div class="rh-kpi-card">
+            <span class="rh-kpi-icon"><i class="bi bi-bezier2"></i></span>
+            <div><div class="rh-kpi-value">@Model.TotalExperimentos</div><div class="rh-kpi-label">Experimentos</div></div>
+        </div>
+        <div class="rh-kpi-card">
+            <span class="rh-kpi-icon"><i class="bi bi-clipboard-data"></i></span>
+            <div><div class="rh-kpi-value">@Model.TotalResultados</div><div class="rh-kpi-label">Resultados</div></div>
+        </div>
+        <div class="rh-kpi-card">
+            <span class="rh-kpi-icon"><i class="bi bi-journal-text"></i></span>
+            <div><div class="rh-kpi-value">@Model.TotalPublicaciones</div><div class="rh-kpi-label">Publicaciones</div></div>
+        </div>
+        <div class="rh-kpi-card">
+            <span class="rh-kpi-icon"><i class="bi bi-list-check"></i></span>
+            <div><div class="rh-kpi-value">@Model.TotalTareasPendientes</div><div class="rh-kpi-label">Tareas pendientes</div></div>
+        </div>
+    </div>
+
+    <div class="rh-grid" style="grid-template-columns:1.1fr .9fr; margin-top:18px;">
+        <div class="rh-card">
+            <div class="rh-section-head">
+                <h3 class="rh-panel-title"><i class="bi bi-folder2-open"></i> Proyectos recientes</h3>
+                <a class="rh-inline-link" asp-controller="Proyectos" asp-action="Index" asp-route-misProyectos="true">Ver todos</a>
+            </div>
+            @if (!Model.ProyectosRecientes.Any())
+            {
+                <p class="rh-empty">No tienes proyectos vinculados todavia.</p>
+            }
+            else
+            {
+                <div class="rh-mini-list">
+                    @foreach (var item in Model.ProyectosRecientes)
+                    {
+                        <a class="rh-mini-item" asp-controller="Proyectos" asp-action="Hub" asp-route-id="@item.IdProyecto">
+                            <strong>@item.Titulo</strong>
+                            <span>@(item.SublineaInvestigacion?.Nombre ?? "Sin sublinea") · @(item.Institucion?.Nombre ?? "Sin institucion")</span>
+                        </a>
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="rh-card">
+            <div class="rh-section-head">
+                <h3 class="rh-panel-title"><i class="bi bi-flag"></i> Hitos pendientes</h3>
+                <a class="rh-inline-link" asp-action="Cronograma">Cronograma</a>
+            </div>
+            @if (!Model.HitosPendientes.Any())
+            {
+                <p class="rh-empty">No hay hitos pendientes.</p>
+            }
+            else
+            {
+                <div class="rh-mini-list">
+                    @foreach (var item in Model.HitosPendientes)
+                    {
+                        <div class="rh-mini-item">
+                            <strong>@item.NombreFase</strong>
+                            <span>@item.Proyecto?.Titulo · @(item.FechaFin?.ToString("yyyy-MM-dd") ?? item.FechaInicio?.ToString("yyyy-MM-dd"))</span>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+
+    <div class="rh-grid" style="grid-template-columns:repeat(2,1fr); margin-top:18px;">
+        <div class="rh-card">
+            <div class="rh-section-head">
+                <h3 class="rh-panel-title"><i class="bi bi-list-check"></i> Tareas activas</h3>
+                <a class="rh-inline-link" asp-action="Tareas">Abrir</a>
+            </div>
+            @if (!Model.TareasPendientes.Any())
+            {
+                <p class="rh-empty">No hay tareas pendientes.</p>
+            }
+            else
+            {
+                <div class="rh-mini-list">
+                    @foreach (var item in Model.TareasPendientes)
+                    {
+                        <div class="rh-mini-item">
+                            <strong>@item.Titulo</strong>
+                            <span>@item.Proyecto?.Titulo · @(item.FechaLimite?.ToString("yyyy-MM-dd") ?? "Sin fecha limite")</span>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <div class="rh-card">
+            <div class="rh-section-head">
+                <h3 class="rh-panel-title"><i class="bi bi-journal-bookmark"></i> Herramientas rapidas</h3>
+            </div>
+            <div class="rh-mini-list">
+                @if (puedeBitacora)
+                {
+                    <a class="rh-mini-item" asp-action="Bitacora">
+                        <strong>Bitacora de proyecto</strong>
+                        <span>Registra decisiones, avances, incidencias y hallazgos.</span>
+                    </a>
+                }
+                @if (puedeSeguimientoMuestras)
+                {
+                    <a class="rh-mini-item" asp-action="Muestras">
+                        <strong>Seguimiento de muestras</strong>
+                        <span>Actualiza estado, ubicacion y observaciones de cada muestra.</span>
+                    </a>
+                }
+                <a class="rh-mini-item" asp-action="Experimentos">
+                    <strong>Vista experimental</strong>
+                    <span>Consulta tus experimentos activos y su contexto de laboratorio.</span>
+                </a>
+                @if (puedeGestionarTareas)
+                {
+                    <a class="rh-mini-item" asp-action="Tareas">
+                        <strong>Gestion de tareas</strong>
+                        <span>Organiza pendientes, prioridad y responsables por proyecto.</span>
+                    </a>
+                }
+            </div>
+        </div>
+    </div>
+
+    <div class="rh-grid" style="grid-template-columns:repeat(3,1fr); margin-top:18px;">
+        <div class="rh-card">
+            <div class="rh-section-head">
+                <h3 class="rh-panel-title"><i class="bi bi-bezier2"></i> Experimentos activos</h3>
+                <a class="rh-inline-link" asp-action="Experimentos">Abrir</a>
+            </div>
+            <div class="rh-mini-list">
+                @foreach (var item in Model.ExperimentosActivos)
+                {
+                    <div class="rh-mini-item">
+                        <strong>@item.Titulo</strong>
+                        <span>@item.Proyecto?.Titulo · @(item.Estado ?? "Sin estado")</span>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="rh-card">
+            <div class="rh-section-head">
+                <h3 class="rh-panel-title"><i class="bi bi-clipboard-data"></i> Resultados recientes</h3>
+                <a class="rh-inline-link" asp-action="Resultados">Abrir</a>
+            </div>
+            <div class="rh-mini-list">
+                @foreach (var item in Model.ResultadosRecientes)
+                {
+                    <div class="rh-mini-item">
+                        <strong>@item.Valor</strong>
+                        <span>@item.Experimento?.Titulo · @item.FechaRegistro.ToString("yyyy-MM-dd")</span>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="rh-card">
+            <div class="rh-section-head">
+                <h3 class="rh-panel-title"><i class="bi bi-journal-text"></i> Publicaciones</h3>
+                <a class="rh-inline-link" asp-action="Publicaciones">Abrir</a>
+            </div>
+            <div class="rh-mini-list">
+                @foreach (var item in Model.PublicacionesRecientes)
+                {
+                    <div class="rh-mini-item">
+                        <strong>@item.Titulo</strong>
+                        <span>@item.Proyecto?.Titulo · @(item.FechaPublicacion?.ToString("yyyy-MM-dd") ?? "Sin fecha")</span>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

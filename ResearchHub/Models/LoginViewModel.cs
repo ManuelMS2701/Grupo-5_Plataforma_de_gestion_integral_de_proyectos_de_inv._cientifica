@@ -4,7 +4,7 @@ namespace ResearchHub.Models
 {
     public class LoginViewModel
     {
-        [Required, EmailAddress]
+        [Required]
         public string Email { get; set; } = string.Empty;
 
         [Required, DataType(DataType.Password)]

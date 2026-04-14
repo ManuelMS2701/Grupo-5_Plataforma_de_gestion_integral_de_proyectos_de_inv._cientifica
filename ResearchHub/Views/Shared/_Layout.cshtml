@@ -1,14 +1,17 @@
 ﻿@using ResearchHub.Models
 @{
     var controller = ViewContext.RouteData.Values["controller"]?.ToString();
-    var entidadActiva = ViewContext.RouteData.Values["nombre"]?.ToString();
     var isAuthenticated = User?.Identity?.IsAuthenticated == true;
     var isAdmin = User?.IsInRole(Roles.Administrador) == true;
-
-    if (string.IsNullOrWhiteSpace(entidadActiva))
-    {
-        entidadActiva = Context?.Request?.Query["nombre"].ToString();
-    }
+    var currentAction = ViewContext.RouteData.Values["action"]?.ToString();
+    var isInvestigador = User?.IsInRole(Roles.Investigador) == true;
+    var isInvestigadorPrincipal = User?.IsInRole(Roles.InvestigadorPrincipal) == true;
+    var isRevisor = User?.IsInRole(Roles.RevisorCientifico) == true;
+    var isTecnico = User?.IsInRole(Roles.TecnicoLaboratorio) == true;
+    var isAnalista = User?.IsInRole(Roles.AnalistaDatos) == true;
+    var isColaboradorExterno = User?.IsInRole(Roles.ColaboradorExterno) == true;
+    var puedeGestionarTrabajo = isInvestigador || isInvestigadorPrincipal || isTecnico || isAnalista;
+    var puedeCrearBitacora = !isColaboradorExterno;
 }
 <!DOCTYPE html>
 <html lang="es">
@@ -20,6 +23,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@500;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/crud.css" asp-append-version="true" />
@@ -31,6 +35,7 @@
             --nav-text: #1e293b;
             --nav-muted: #64748b;
             --nav-active: #e1ecfb;
+            --nav-accent: linear-gradient(135deg, #0ea5e9, #22c55e);
             --ink: #0f172a;
             --muted: #64748b;
             --paper: #f6f8fc;
@@ -93,6 +98,19 @@
             letter-spacing: -0.3px;
         }
 
+        .brand-mark {
+            width: 54px;
+            height: 54px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 14px;
+            background: var(--nav-accent);
+            color: #fff;
+            font-size: 1.4rem;
+            box-shadow: 0 14px 28px rgba(14, 165, 233, 0.18);
+        }
+
         .menu-group {
             margin-bottom: 12px;
         }
@@ -107,7 +125,9 @@
         }
 
         .menu-link {
-            display: block;
+            display: flex;
+            align-items: center;
+            gap: 10px;
             color: var(--nav-text);
             text-decoration: none;
             padding: 9px 11px;
@@ -128,6 +148,12 @@
             background: var(--nav-active);
             border-color: rgba(96, 165, 250, 0.2);
             color: #0f172a;
+        }
+
+        .menu-link i {
+            width: 18px;
+            text-align: center;
+            color: #2563eb;
         }
 
         .side-user {
@@ -203,7 +229,7 @@
 <body>
     <div class="mobile-top">
         <a asp-controller="Home" asp-action="Index">ResearchHub</a>
-        @if (isAdmin)
+        @if (isAuthenticated)
         {
             <span>@User.Identity?.Name</span>
         }
@@ -212,51 +238,96 @@
     <div class="app-shell">
         <aside class="side">
             <a class="brand" asp-controller="Home" asp-action="Index">
-                <img src="~/Images/Logo.png" alt="ResearchHub" />
+                <span class="brand-mark"><i class="bi bi-flask"></i></span>
                 <span>ResearchHub</span>
             </a>
 
             <nav>
                 <div class="menu-group">
                     <p class="menu-title">General</p>
-                    <a class="menu-link @(controller == "Home" ? "active" : "")" asp-controller="Home" asp-action="Index">Inicio</a>
-                    <a class="menu-link @(controller == "Proyectos" ? "active" : "")" asp-controller="Proyectos" asp-action="Index">Proyectos</a>
-                    <a class="menu-link @(controller == "Busqueda" ? "active" : "")" asp-controller="Busqueda" asp-action="Index">Busqueda global</a>
+                    <a class="menu-link @(controller == "Home" ? "active" : "")" asp-controller="Home" asp-action="Index"><i class="bi bi-house-door"></i> Inicio</a>
+                    <a class="menu-link @(controller == "MiEspacio" ? "active" : "")" asp-controller="MiEspacio" asp-action="Index"><i class="bi bi-stars"></i> Mi espacio</a>
+                    <a class="menu-link @(controller == "Proyectos" ? "active" : "")" asp-controller="Proyectos" asp-action="Index"><i class="bi bi-kanban"></i> Proyectos</a>
+                    <a class="menu-link @(controller == "Busqueda" ? "active" : "")" asp-controller="Busqueda" asp-action="Index"><i class="bi bi-search"></i> Busqueda global</a>
                 </div>
 
                 @if (isAdmin)
                 {
                     <div class="menu-group">
                         <p class="menu-title">Ejecucion cientifica</p>
-                        <a class="menu-link @(controller == "Experimentos" ? "active" : "")" asp-controller="Experimentos" asp-action="Index">Experimentos</a>
-                        <a class="menu-link @(controller == "Muestras" ? "active" : "")" asp-controller="Muestras" asp-action="Index">Muestras</a>
-                        <a class="menu-link @(controller == "Laboratorios" ? "active" : "")" asp-controller="Laboratorios" asp-action="Index">Laboratorios</a>
-                        <a class="menu-link @(controller == "EquiposLaboratorio" ? "active" : "")" asp-controller="EquiposLaboratorio" asp-action="Index">Equipos</a>
-                        <a class="menu-link @(controller == "Protocolos" ? "active" : "")" asp-controller="Protocolos" asp-action="Index">Protocolos</a>
+                        <a class="menu-link @(controller == "Experimentos" ? "active" : "")" asp-controller="Experimentos" asp-action="Index"><i class="bi bi-bezier2"></i> Experimentos</a>
+                        <a class="menu-link @(controller == "Muestras" ? "active" : "")" asp-controller="Muestras" asp-action="Index"><i class="bi bi-droplet"></i> Muestras</a>
+                        <a class="menu-link @(controller == "Laboratorios" ? "active" : "")" asp-controller="Laboratorios" asp-action="Index"><i class="bi bi-building"></i> Laboratorios</a>
+                        <a class="menu-link @(controller == "EquiposLaboratorio" ? "active" : "")" asp-controller="EquiposLaboratorio" asp-action="Index"><i class="bi bi-cpu"></i> Equipos</a>
+                        <a class="menu-link @(controller == "Protocolos" ? "active" : "")" asp-controller="Protocolos" asp-action="Index"><i class="bi bi-journal-medical"></i> Protocolos</a>
                     </div>
 
                     <div class="menu-group">
                         <p class="menu-title">Datos y calidad</p>
-                        <a class="menu-link @(controller == "Variables" ? "active" : "")" asp-controller="Variables" asp-action="Index">Variables</a>
-                        <a class="menu-link @(controller == "Resultados" ? "active" : "")" asp-controller="Resultados" asp-action="Index">Resultados</a>
-                        <a class="menu-link @(controller == "Analisis" ? "active" : "")" asp-controller="Analisis" asp-action="Index">Analisis</a>
-                        <a class="menu-link @(controller == "Validaciones" ? "active" : "")" asp-controller="Validaciones" asp-action="Index">Validaciones</a>
-                        <a class="menu-link @(controller == "RepositoriosDatos" ? "active" : "")" asp-controller="RepositoriosDatos" asp-action="Index">Repositorios</a>
-                        <a class="menu-link @(controller == "Publicaciones" ? "active" : "")" asp-controller="Publicaciones" asp-action="Index">Publicaciones</a>
+                        <a class="menu-link @(controller == "Variables" ? "active" : "")" asp-controller="Variables" asp-action="Index"><i class="bi bi-sliders"></i> Variables</a>
+                        <a class="menu-link @(controller == "Resultados" ? "active" : "")" asp-controller="Resultados" asp-action="Index"><i class="bi bi-clipboard-data"></i> Resultados</a>
+                        <a class="menu-link @(controller == "Analisis" ? "active" : "")" asp-controller="Analisis" asp-action="Index"><i class="bi bi-graph-up-arrow"></i> Analisis</a>
+                        <a class="menu-link @(controller == "Validaciones" ? "active" : "")" asp-controller="Validaciones" asp-action="Index"><i class="bi bi-patch-check"></i> Validaciones</a>
+                        <a class="menu-link @(controller == "RepositoriosDatos" ? "active" : "")" asp-controller="RepositoriosDatos" asp-action="Index"><i class="bi bi-database"></i> Repositorios</a>
+                        <a class="menu-link @(controller == "Publicaciones" ? "active" : "")" asp-controller="Publicaciones" asp-action="Index"><i class="bi bi-journal-richtext"></i> Publicaciones</a>
                     </div>
+                }
+                else
+                {
+                    <div class="menu-group">
+                        <p class="menu-title">Trabajo cientifico</p>
+                        <a class="menu-link @(controller == "MiEspacio" && currentAction == "Experimentos" ? "active" : "")" asp-controller="MiEspacio" asp-action="Experimentos"><i class="bi bi-bezier2"></i> Experimentos</a>
+                        <a class="menu-link @(controller == "MiEspacio" && currentAction == "Cronograma" ? "active" : "")" asp-controller="MiEspacio" asp-action="Cronograma"><i class="bi bi-calendar-week"></i> Cronograma</a>
+                        @if (puedeGestionarTrabajo)
+                        {
+                            <a class="menu-link @(controller == "MiEspacio" && currentAction == "Tareas" ? "active" : "")" asp-controller="MiEspacio" asp-action="Tareas"><i class="bi bi-list-check"></i> Tareas</a>
+                        }
+                        @if (puedeCrearBitacora || isRevisor)
+                        {
+                            <a class="menu-link @(controller == "MiEspacio" && currentAction == "Bitacora" ? "active" : "")" asp-controller="MiEspacio" asp-action="Bitacora"><i class="bi bi-journal-bookmark"></i> Bitacora</a>
+                        }
+                        @if (isInvestigador || isInvestigadorPrincipal || isTecnico)
+                        {
+                            <a class="menu-link @(controller == "MiEspacio" && currentAction == "Muestras" ? "active" : "")" asp-controller="MiEspacio" asp-action="Muestras"><i class="bi bi-droplet"></i> Muestras</a>
+                        }
+                        @if (isInvestigador || isInvestigadorPrincipal || isAnalista || isRevisor || isColaboradorExterno)
+                        {
+                            <a class="menu-link @(controller == "MiEspacio" && currentAction == "Resultados" ? "active" : "")" asp-controller="MiEspacio" asp-action="Resultados"><i class="bi bi-clipboard-data"></i> Resultados</a>
+                            <a class="menu-link @(controller == "MiEspacio" && currentAction == "Publicaciones" ? "active" : "")" asp-controller="MiEspacio" asp-action="Publicaciones"><i class="bi bi-journal-text"></i> Publicaciones</a>
+                        }
+                    </div>
+
+                    @if (isInvestigadorPrincipal || isInvestigador)
+                    {
+                        <div class="menu-group">
+                            <p class="menu-title">Impulso de proyectos</p>
+                            <a class="menu-link @(controller == "Proyectos" && currentAction == "CreatePropio" ? "active" : "")" asp-controller="Proyectos" asp-action="CreatePropio"><i class="bi bi-lightbulb"></i> Proponer proyecto</a>
+                            <a class="menu-link @(controller == "Proyectos" && Context.Request.Query["misProyectos"] == "true" ? "active" : "")" asp-controller="Proyectos" asp-action="Index" asp-route-misProyectos="true"><i class="bi bi-person-workspace"></i> Mis proyectos</a>
+                        </div>
+                    }
+
+                    @if (isRevisor || isAnalista)
+                    {
+                        <div class="menu-group">
+                            <p class="menu-title">Revision y evidencia</p>
+                            <a class="menu-link @(controller == "Busqueda" ? "active" : "")" asp-controller="Busqueda" asp-action="Index"><i class="bi bi-search-heart"></i> Revisar resultados</a>
+                        </div>
+                    }
                 }
 
                 @if (isAdmin)
                 {
                     <div class="menu-group">
                         <p class="menu-title">Administracion</p>
-                        <a class="menu-link @(controller == "Admin" ? "active" : "")" asp-controller="Admin" asp-action="Index">Panel admin</a>
-                        <a class="menu-link @(controller == "Instituciones" ? "active" : "")" asp-controller="Instituciones" asp-action="Index">Instituciones</a>
-                        <a class="menu-link @(controller == "Investigadores" ? "active" : "")" asp-controller="Investigadores" asp-action="Index">Investigadores</a>
-                        <a class="menu-link @(controller == "LineasInvestigacion" ? "active" : "")" asp-controller="LineasInvestigacion" asp-action="Index">Lineas de investigacion</a>
-                        <a class="menu-link @(controller == "SublineasInvestigacion" ? "active" : "")" asp-controller="SublineasInvestigacion" asp-action="Index">Sublineas</a>
-                        <a class="menu-link @(controller == "Colaboradores" ? "active" : "")" asp-controller="Colaboradores" asp-action="Index">Colaboradores</a>
-                        <a class="menu-link @(controller == "Cronogramas" ? "active" : "")" asp-controller="Cronogramas" asp-action="Index">Cronogramas</a>
+                        <a class="menu-link @(controller == "Admin" ? "active" : "")" asp-controller="Admin" asp-action="Index"><i class="bi bi-speedometer2"></i> Panel admin</a>
+                        <a class="menu-link @(controller == "UsuariosSistema" ? "active" : "")" asp-controller="UsuariosSistema" asp-action="Index"><i class="bi bi-people"></i> Usuarios</a>
+                        <a class="menu-link @(controller == "RolesSistema" ? "active" : "")" asp-controller="RolesSistema" asp-action="Index"><i class="bi bi-shield-lock"></i> Roles</a>
+                        <a class="menu-link @(controller == "Instituciones" ? "active" : "")" asp-controller="Instituciones" asp-action="Index"><i class="bi bi-bank"></i> Instituciones</a>
+                        <a class="menu-link @(controller == "Investigadores" ? "active" : "")" asp-controller="Investigadores" asp-action="Index"><i class="bi bi-person-badge"></i> Investigadores</a>
+                        <a class="menu-link @(controller == "LineasInvestigacion" ? "active" : "")" asp-controller="LineasInvestigacion" asp-action="Index"><i class="bi bi-diagram-3"></i> Lineas de investigacion</a>
+                        <a class="menu-link @(controller == "SublineasInvestigacion" ? "active" : "")" asp-controller="SublineasInvestigacion" asp-action="Index"><i class="bi bi-node-plus"></i> Sublineas</a>
+                        <a class="menu-link @(controller == "Colaboradores" ? "active" : "")" asp-controller="Colaboradores" asp-action="Index"><i class="bi bi-people-fill"></i> Colaboradores</a>
+                        <a class="menu-link @(controller == "Cronogramas" ? "active" : "")" asp-controller="Cronogramas" asp-action="Index"><i class="bi bi-calendar3"></i> Cronogramas</a>
                     </div>
                 }
             </nav>
@@ -267,12 +338,12 @@
                     <div>Sesion: @User.Identity?.Name</div>
                     <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
                         @Html.AntiForgeryToken()
-                        <button type="submit" class="side-btn">Cerrar sesion</button>
+                        <button type="submit" class="side-btn"><i class="bi bi-box-arrow-right"></i> Cerrar sesion</button>
                     </form>
                 }
                 else
                 {
-                    <a class="menu-link" asp-controller="Account" asp-action="Login">Iniciar sesion</a>
+                    <a class="menu-link" asp-controller="Account" asp-action="Login"><i class="bi bi-box-arrow-in-right"></i> Iniciar sesion</a>
                 }
             </div>
         </aside>

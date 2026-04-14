@@ -27,14 +27,13 @@
     </div>
 
     <div class="rh-table">
-        <table class="table">
+        <table class="table rh-table-fixed">
             <thead>
                 <tr>
                     <th>Nombre</th>
                     <th>Marca</th>
                     <th>Modelo</th>
                     <th>Estado</th>
-                    <th>Laboratorio</th>
                     <th></th>
                 </tr>
             </thead>
@@ -42,11 +41,10 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@item.Nombre</td>
-                    <td>@item.Marca</td>
-                    <td>@item.Modelo</td>
+                    <td class="rh-cell-clip" title="@item.Nombre">@item.Nombre</td>
+                    <td class="rh-cell-clip" title="@item.Marca">@item.Marca</td>
+                    <td class="rh-cell-clip" title="@item.Modelo">@item.Modelo</td>
                     <td><span class="rh-pill">@item.Estado</span></td>
-                    <td>@item.Laboratorio?.Nombre</td>
                     <td class="rh-actions">
                         <a asp-action="Edit" asp-route-id="@item.IdEquipo">Editar</a>
                         <a asp-action="Details" asp-route-id="@item.IdEquipo">Detalles</a>
@@ -58,3 +56,5 @@
         </table>
     </div>
 </div>
+
+@await Html.PartialAsync("_SimplePager")

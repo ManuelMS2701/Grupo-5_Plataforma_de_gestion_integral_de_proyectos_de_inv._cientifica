@@ -24,14 +24,16 @@
             <option value="20" selected="@(Model.PageSize == 20)">20 / pagina</option>
             <option value="50" selected="@(Model.PageSize == 50)">50 / pagina</option>
         </select>
-        <button class="rh-btn" type="submit">Filtrar</button>
-        <a class="rh-btn rh-btn-secondary" asp-action="ExportCsv" asp-route-q="@Model.Query" asp-route-sort="@Model.Sort">Exportar CSV</a>
+        <button class="rh-btn" type="submit"><i class="bi bi-funnel"></i> Filtrar</button>
+        <a class="rh-btn rh-btn-secondary" asp-action="Index"><i class="bi bi-eraser"></i> Limpiar</a>
+        <a class="rh-btn rh-btn-secondary" asp-action="ExportCsv" asp-route-q="@Model.Query" asp-route-sort="@Model.Sort"><i class="bi bi-download"></i> CSV</a>
     </form>
 
-    <div class="rh-meta">Mostrando @Model.FromItem-@Model.ToItem de @Model.TotalItems registros</div>
+
+    <div class="rh-meta">Mostrando @Model.FromItem - @Model.ToItem de @Model.TotalItems registros</div>
 
     <div class="rh-table">
-        <table class="table">
+        <table class="table rh-table-fixed">
             <thead>
                 <tr>
                     <th>Nombre</th>
@@ -51,18 +53,19 @@
             {
                 @foreach (var item in Model.Items)
                 {
-                    <tr>
-                        <td>@item.Nombre @item.Apellido</td>
-                        <td>@item.Email</td>
-                        <td>@item.Tipo</td>
-                        <td>@item.Rol</td>
-                        <td>@item.Proyecto?.Titulo</td>
-                        <td class="rh-row-actions">
-                            <a asp-action="Edit" asp-route-id="@item.IdColaborador">Editar</a>
-                            <a asp-action="Details" asp-route-id="@item.IdColaborador">Detalles</a>
-                            <a asp-action="Delete" asp-route-id="@item.IdColaborador">Eliminar</a>
-                        </td>
-                    </tr>
+                        <tr>
+                            <td class="rh-cell-clip" title="@($"{item.Nombre} {item.Apellido}")">@item.Nombre @item.Apellido</td>
+                            <td class="rh-cell-clip" title="@item.Email">@item.Email</td>
+                            <td class="rh-cell-clip" title="@item.Tipo">@item.Tipo</td>
+                            <td class="rh-cell-clip" title="@item.Rol">@item.Rol</td>
+                            <td class="rh-cell-clip" title="@item.Proyecto?.Titulo">@item.Proyecto?.Titulo</td>
+                            <td class="rh-row-actions">
+                                <a asp-action="Edit" asp-route-id="@item.IdColaborador">Editar</a>
+                                <a asp-action="Details" asp-route-id="@item.IdColaborador">Detalles</a>
+                                <a asp-action="Delete" asp-route-id="@item.IdColaborador">Eliminar</a>
+                            </td>
+                        </tr>
+
                 }
             }
             </tbody>

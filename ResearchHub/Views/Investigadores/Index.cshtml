@@ -1,4 +1,4 @@
-﻿@model IEnumerable<ResearchHub.Models.Investigador>
+@model IEnumerable<ResearchHub.Models.Investigador>
 
 @{
     ViewData["Title"] = "Investigadores de Proyectos";
@@ -107,13 +107,12 @@
     </div>
 
     <div class="rh-table">
-        <table class="table">
+        <table class="table rh-table-fixed">
             <thead>
                 <tr>
                     <th>Nombre</th>
                     <th>Email</th>
                     <th>Especialidad</th>
-                    <th>Institución</th>
                     <th>Activo</th>
                     <th></th>
                 </tr>
@@ -122,12 +121,11 @@
             @foreach (var item in Model)
             {
                 <tr>
-                    <td>@item.Nombre @item.Apellido</td>
-                    <td>@item.Email</td>
-                    <td>@item.Especialidad</td>
-                    <td>@item.Institucion?.Nombre</td>
+                    <td class="rh-cell-clip" title="@(item.Nombre + " " + item.Apellido)">@item.Nombre @item.Apellido</td>
+                    <td class="rh-cell-clip" title="@item.Email">@item.Email</td>
+                    <td class="rh-cell-clip" title="@item.Especialidad">@item.Especialidad</td>
                     <td>
-                        <span class="rh-pill">@(item.Activo ? "Sí" : "No")</span>
+                        <span class="rh-pill">@(item.Activo ? "S�" : "No")</span>
                     </td>
                     <td class="rh-actions">
                         <a asp-action="Edit" asp-route-id="@item.IdInvestigador">Editar</a>
@@ -140,3 +138,5 @@
         </table>
     </div>
 </div>
+
+@await Html.PartialAsync("_SimplePager")

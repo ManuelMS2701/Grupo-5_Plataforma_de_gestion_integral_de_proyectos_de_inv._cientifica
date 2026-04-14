@@ -17,15 +17,23 @@ namespace ResearchHub.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1, int pageSize = 10)
         {
-            var data = await _context.EquiposLaboratorio
+            page = Math.Max(1, page);
+            pageSize = Math.Clamp(pageSize, 5, 50);
+            var query = _context.EquiposLaboratorio
                 .Include(e => e.Laboratorio)
                 .AsNoTracking()
-                .OrderBy(e => e.Nombre)
-                .ToListAsync();
+                .OrderBy(e => e.Nombre);
+            var totalItems = await query.CountAsync();
+            var data = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+            ViewBag.Page = page;
+            ViewBag.PageSize = pageSize;
+            ViewBag.TotalItems = totalItems;
+            ViewBag.TotalPages = Math.Max(1, (int)Math.Ceiling(totalItems / (double)pageSize));
             return View(data);
         }
+
 
         public async Task<IActionResult> Details(int? id)
         {
@@ -54,7 +62,7 @@ namespace ResearchHub.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            await CargarCombosAsync();
+            await CargarCombosAsync(model.Estado);
             return View(model);
         }
 
@@ -63,7 +71,7 @@ namespace ResearchHub.Controllers
             if (id == null) return NotFound();
             var model = await _context.EquiposLaboratorio.FindAsync(id);
             if (model == null) return NotFound();
-            await CargarCombosAsync();
+            await CargarCombosAsync(model.Estado);
             return View(model);
         }
 
@@ -88,7 +96,7 @@ namespace ResearchHub.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            await CargarCombosAsync();
+            await CargarCombosAsync(model.Estado);
             return View(model);
         }
 
@@ -116,10 +124,21 @@ namespace ResearchHub.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task CargarCombosAsync()
+        private async Task CargarCombosAsync(string? estadoSeleccionado = null)
         {
             var laboratorios = await _context.Laboratorios.AsNoTracking().OrderBy(l => l.Nombre).ToListAsync();
             ViewData["IdLaboratorio"] = new SelectList(laboratorios, "IdLaboratorio", "Nombre");
+            ViewData["EstadosEquipo"] = new SelectList(
+                new[]
+                {
+                    new { Value = "Operativo", Text = "Operativo" },
+                    new { Value = "En mantenimiento", Text = "En mantenimiento" },
+                    new { Value = "Fuera de servicio", Text = "Fuera de servicio" },
+                    new { Value = "Baja", Text = "Baja" }
+                },
+                "Value",
+                "Text",
+                estadoSeleccionado);
         }
     }
 }

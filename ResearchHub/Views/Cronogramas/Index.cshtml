@@ -33,14 +33,12 @@
     <div class="rh-meta">Mostrando @Model.FromItem-@Model.ToItem de @Model.TotalItems registros</div>
 
     <div class="rh-table">
-        <table class="table">
+        <table class="table rh-table-fixed">
             <thead>
                 <tr>
                     <th>Fase</th>
-                    <th>Estado</th>
                     <th>Avance</th>
                     <th>Hito</th>
-                    <th>Depende de</th>
                     <th>Proyecto</th>
                     <th></th>
                 </tr>
@@ -48,19 +46,17 @@
             <tbody>
             @if (!Model.Items.Any())
             {
-                <tr><td colspan="7" class="rh-empty">No hay resultados para este filtro.</td></tr>
+                <tr><td colspan="5" class="rh-empty">No hay resultados para este filtro.</td></tr>
             }
             else
             {
                 @foreach (var item in Model.Items)
                 {
                     <tr>
-                        <td>@item.NombreFase</td>
-                        <td>@item.Estado</td>
+                        <td class="rh-cell-clip" title="@item.NombreFase">@item.NombreFase</td>
                         <td><span class="rh-pill">@item.PorcentajeAvance%</span></td>
                         <td>@(item.EsHito ? "Sí" : "No")</td>
-                        <td>@item.Dependencia?.NombreFase</td>
-                        <td>@item.Proyecto?.Titulo</td>
+                        <td class="rh-cell-clip" title="@item.Proyecto?.Titulo">@item.Proyecto?.Titulo</td>
                         <td class="rh-row-actions">
                             <a asp-action="Edit" asp-route-id="@item.IdCronograma">Editar</a>
                             <a asp-action="Details" asp-route-id="@item.IdCronograma">Detalles</a>

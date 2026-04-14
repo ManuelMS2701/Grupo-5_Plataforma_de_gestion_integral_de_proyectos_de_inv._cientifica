@@ -33,7 +33,12 @@
                 <div><label class="rh-label" asp-for="Modelo"></label><input class="form-control rh-input" asp-for="Modelo" /></div>
                 <div><label class="rh-label" asp-for="NumeroSerie"></label><input class="form-control rh-input" asp-for="NumeroSerie" /></div>
                 <div><label class="rh-label" asp-for="FechaAdquisicion"></label><input class="form-control rh-input" asp-for="FechaAdquisicion" type="date" /></div>
-                <div><label class="rh-label" asp-for="Estado"></label><input class="form-control rh-input" asp-for="Estado" /></div>
+                <div>
+                    <label class="rh-label" asp-for="Estado"></label>
+                    <select class="form-select rh-input" asp-for="Estado" asp-items="@(ViewData["EstadosEquipo"] as SelectList)">
+                        <option value="">Selecciona un estado</option>
+                    </select>
+                </div>
                 <div><label class="rh-label" asp-for="IdLaboratorio">Laboratorio</label><select class="form-select rh-input" asp-for="IdLaboratorio" asp-items="ViewBag.IdLaboratorio"></select></div>
             </div>
             <div class="rh-actions"><button class="rh-btn" type="submit">Guardar</button><a class="rh-btn rh-btn-secondary" asp-action="Index">Cancelar</a></div>
